@@ -39,7 +39,7 @@ IDE (integrated development environment) - среда разработки со 
 
 Нажимаем "Установить"
 
-![alt](./install-ide-images/vs-installer-1.png)
+![alt](./img/vs-installer-1.png)
 
 Откроется окно с выбором требуемых компонентов для установки. В VS можно разрабатывать множество различных типов программ. Далеко не все вам понадобятся сразу или когда-либо и для экономии места на диске можно выбрать только то, что нужно в данный момент. В дальнейшем можно будет добавить/удалить компоненты, зайдя в этот же инсталлятор и выбрав вариант "Изменить" у уже установленной Visual Studio.
 
@@ -47,11 +47,11 @@ IDE (integrated development environment) - среда разработки со 
 
 Если вам захочется поставить что-то еще, например, веб приложения или С++ приложения, то выбирайте то, что хотите поставить. Внизу у кнопки "Установить" вы увидите сколько места на диске потребуется для установки всего этого добра. У меня установлено больше компонентов, чем вам нужно, поэтому не обращайте внимание на мои цифры.
 
-![alt](./install-ide-images/vs-installer-2.png)
+![alt](./img/vs-installer-2.png)
 
 Также настоятельно рекомендую дополнительно поставить английский язык.
 
-![alt](./install-ide-images/vs-installer-3.png)
+![alt](./img/vs-installer-3.png)
 
 После того, как выбрали все, что нужно, нажимайте на кнопку "Установить" и ждите окончания установки.
 
@@ -83,70 +83,70 @@ IDE (integrated development environment) - среда разработки со 
 
 При первом запуске, появится приветственное окно. Вас попросят залогиниться, создать учетку Microsoft или скипнуть этот шаг. После этого у вас спросят про базовые настройки. Можете ничего не менять и пройти дальше или поменять на свой вкус цветовую схему.
 
-![alt](./install-ide-images/vs-hello-screen.png)
+![alt](./img/vs-hello-screen.png)
 
 Далее откроется окно, которое в дальнейшем и будет первым открываться при запуске VS. Это окно со списком недавно открывавшихся проектов (при вашем первом запуске будет пусто) и возможность создать новый проект. Нажимает "create a new project"
 
-![alt](./install-ide-images/vs-projects.png)
+![alt](./img/vs-projects.png)
 
 Нужно выбрать тип проекта, который нужен. Вы достаточное долгое время будете создавать только консольные приложения. Поэтому ищем тип "Console App". Чтобы отфильтровать доступные варианты можно воспользоваться выпадающими списками, отфильтровать язык C# и тип приложения - Console. Нажимаем "Далее".
 
-![alt](./install-ide-images/vs-project-type.png)
+![alt](./img/vs-project-type.png)
 
 Задайте осмысленное имя проекта на английском языке и путь до папки, где вы хотите хранить ваши проекты. Я предпочитаю создавать для этого отдельное пространство, но по умолчанию визуалка предложит вам место внутри "Документов". Снова нажимаем "Далее".
 
-![alt](./install-ide-images/vs-project-name.png)
+![alt](./img/vs-project-name.png)
 
 Проект создан. VS открывает окно редактора, в котором можно будет в дальнейшем писать код. Справа будет Solution Explorer, где в виде дерева будет видна структура вашего проекта со всеми подключенными файлами.
 
-![alt](./install-ide-images/vs-program.png)
+![alt](./img/vs-program.png)
 
 Для запуска программы нужно нажать на зеленый треугольник вверху.
 
-![alt](./install-ide-images/vs-run.png)
+![alt](./img/vs-run.png)
 
 Запустится консоль, а в ней сообщение, которое выводилось в коде.
 
-![alt](./install-ide-images/vs-console.png)
+![alt](./img/vs-console.png)
 
 Если по какой-то причине приветственное окно с созданием нового проекта у вас не появилось и вы оказались в пустом окне Visual Studio, всегда можно запустить создание проекта вручную через меню `File`.
 
-![alt](./install-ide-images/vs-create-proj-alt.png)
+![alt](./img/vs-create-proj-alt.png)
 
 ## Rider
 При самом первом запуске Rider попросит выбрать начальные настройки. Если хотите, можете поменять под себя, например, цветую тему, или оставить все настройки без изменений и прокликать вперед до экрана с проектами.
 
 При старте Rider открывается экран с недавно открывавшимися проектами. При первом запуске он будет пустой. Также на этой экране будет кнопка "New Solution" для создания нового проекта. Кликаем ее.
 
-![alt](./install-ide-images/rider-projects.png)
+![alt](./img/rider-projects.png)
 
 Откроется меню создания проекта. Нам нужен тип Console, выбираем его слева. Справа вписываем название проекта в Solution и Project name. Пусть они совпадают. Далее будем разбирать в чем между ними разница.
 
 Задайте осмысленное имя проекта на английском языке и путь до папки, где вы хотите хранить ваши проекты. Я предпочитаю создавать для этого отдельное пространство, но по умолчанию это будет где-то внутри "Документов". Нажимаем "Далее".
 
-![alt](./install-ide-images/rider-new-project.png)
+![alt](./img/rider-new-project.png)
 
 Проект создан. Откроется окно редактора, в котором можно будет в дальнейшем писать код. Слева будет Solution Explorer, где в виде дерева будет видна структура вашего проекта со всеми подключенными файлами.
 
-![alt](./install-ide-images/rider-program.png)
+![alt](./img/rider-program.png)
 
 Для запуска программы нужно нажать на зеленый треугольник вверху.
 
-![alt](./install-ide-images/rider-run.png)
+![alt](./img/rider-run.png)
 
 Запустится консоль, а в ней сообщение, которое выводилось в коде.
 
-![alt](./install-ide-images/rider-console.png)
+![alt](./img/rider-console.png)
 
 По умолчанию Rider выводит программу в свой встроенный терминал, а не в отдельное окно с консолью. Это поведение можно поменять, изменив настройки запуска.
 
-![alt](./install-ide-images/rider-edit-conf.png)
+![alt](./img/rider-edit-conf.png)
 
-![alt](./install-ide-images/rider-use-external-console.png)
+![alt](./img/rider-use-external-console.png)
 
 Если по какой-то причине приветственное окно с созданием нового проекта у вас не появилось и вы оказались внутри Rider без проекта, всегда можно запустить создание проекта вручную через меню `File`.
 
-![alt](./install-ide-images/rider-menu-1.png)
+![alt](./img/rider-menu-1.png)
 
 
 ## VS Code
@@ -155,50 +155,50 @@ IDE (integrated development environment) - среда разработки со 
 
 Далее откройте VS Code и выберите `File -> Open Folder`. 
 
-![alt text](install-ide-images/vscode-open-folder.png)
+![alt text](img/vscode-open-folder.png)
 
 В открывшемся окне найдите созданную вами папку для проекта.
 
-![alt text](install-ide-images/vscode-new-folder.png)
+![alt text](img/vscode-new-folder.png)
 
 VS Code загрузит папку, но она пустая, поэтому по сути ничего не изменится. Пока что. Нужно открыть терминал. `View -> Open Terminal`
 
-![alt text](install-ide-images/vscode-open-terminal.png)
+![alt text](img/vscode-open-terminal.png)
 
 Терминал откроется в панели внизу. Вводим в терминал команду для создания проекта и нажимаем Enter.
 
 ```
 dotnet new console --framework net8.0 --use-program-main
 ```
-![alt text](install-ide-images/vscode-create-project.png)
+![alt text](img/vscode-create-project.png)
 
 После выполнения команды в терминале, создадутся файлы проекта. VS Code покажет их в Explorer в панели слева.
 
-![alt text](install-ide-images/vscode-explorer.png)
+![alt text](img/vscode-explorer.png)
 
 Если открыть файл `Program.cs`, то там будет текст программы.
 
-![alt text](install-ide-images/vscode-program.png)
+![alt text](img/vscode-program.png)
 
 Для запуска программы сначала нужно создать конфигурацию запуска. Меню `Run -> Add Configuration`
 
-![alt text](install-ide-images/vscode-run-add-config.png)
+![alt text](img/vscode-run-add-config.png)
 
 Появится список доступных конфигураций. Нам подойдет `.NET 5+ and .NET Core`. Выбираем его.
 
-![alt text](install-ide-images/vscode-config-options.png)
+![alt text](img/vscode-config-options.png)
 
 Во-первых, создастся папка с именем `.vscode`, в которой хранятся файлы с настройками проекта в рамках VS Code. Во-вторых, в папке создадутся файлы с конфигурациями запуска программы. В них можно задавать значения параметров, чтобы менять поведение запуска программы. Например, выбрать встроенную в VS Code консоль или внешнюю и т.д.
 
-![alt text](install-ide-images/vscode-config.png)
+![alt text](img/vscode-config.png)
 
 Теперь программу можно запустить через меню `Run -> Run Without Debugging`. Программа скомпилируется, затем откроется панелька с консолью, в которую выведется текст программы.
 
-![alt text](install-ide-images/vscode-run-menu.png)
+![alt text](img/vscode-run-menu.png)
 
 Еще можно запускать программу через отдельную панель для дебага. Переключить панель можно слева. Там будет зеленый треугольник для запуска.
 
-![alt text](install-ide-images/vscode-debug-panel.png)
+![alt text](img/vscode-debug-panel.png)
 
 # Запрет на top-level file
 
