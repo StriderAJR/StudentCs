@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FunctionBuilder.Logic\FunctionBuilder.Logic.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="FunctionBuilder.Logic">
+        <HintPath>..\FunctionBuilder.Logic\bin\Debug\netcoreapp3.1\FunctionBuilder.Logic.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

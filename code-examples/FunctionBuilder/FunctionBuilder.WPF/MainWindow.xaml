@@ -1,0 +1,65 @@
+﻿<Window x:Class="FunctionBuilder.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FunctionBuilder.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DockPanel HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="20"
+               Grid.Row="0" Grid.Column="0">
+            <StackPanel>
+                <TextBlock Background="Red">Заголовок</TextBlock>
+                <DockPanel DockPanel.Dock="Left"
+                   Background="Gray"
+                   HorizontalAlignment="Stretch">
+                    <Label>f(x) =</Label>
+                    <TextBox Name="tbExpression"
+                   HorizontalAlignment="Stretch"
+                   Background="Azure">1+2*x</TextBox>
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Left">
+                    <UniformGrid Grid.Row="0" Columns="6">
+                        <Label MaxWidth="50">x.min =</Label>
+                        <TextBox Name="tbRangeStart">0</TextBox>
+                        <Label Width="50">x.max =</Label>
+                        <TextBox Name="tbRangeEnd">4</TextBox>
+                        <Label Width="50">x.step =</Label>
+                        <TextBox Name="tbDelta">1</TextBox>
+                    </UniformGrid>
+                </DockPanel>
+                <Button Name="btnCalculate"
+                HorizontalAlignment="Left"
+                Click="btnCalculate_Click">Вычислить</Button>
+                <StackPanel Name="spRPN"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <Label>ОПЗ:</Label>
+                    <TextBlock Name="tbRPN"></TextBlock>
+                </StackPanel>
+                <StackPanel Name="spResult"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <Label>Результат:</Label>
+                    <TextBlock Name="tbResult"></TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="0">
+            <DataGrid 
+                Name="gFunctionValues"
+                Visibility="Collapsed"
+                AutoGenerateColumns="True" 
+                ItemsSource="{DynamicResource ResourceKey=phones}">
+            </DataGrid>
+            <local:PlotControl></local:PlotControl>
+        </DockPanel>
+    </Grid>
+</Window>
