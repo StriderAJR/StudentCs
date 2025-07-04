@@ -63,7 +63,7 @@ IDE (integrated development environment) - среда разработки со 
 
 Или найти альтернативную ссылку для скачивания.
 
-Скачиваем с [официального сайта](https://www.jetbrains.com/ru-ru/rider/download) или [моего Google Drive](https://drive.google.com/drive/folders/1kNwf7ZyI4R3rbhWt9ybI6P8QC0Uia-b6?usp=sharing). Ставим триальную версию.
+Скачиваем с [официального сайта](https://www.jetbrains.com/ru-ru/rider/download) или другого ресурса, который найдете. Ставим триальную версию.
 
 ## Установка Visual Studio Code
 
