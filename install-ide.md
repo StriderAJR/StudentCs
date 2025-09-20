@@ -168,7 +168,7 @@ VS Code загрузит папку, но она пустая, поэтому п
 Терминал откроется в панели внизу. Вводим в терминал команду для создания проекта и нажимаем Enter.
 
 ```
-dotnet new console --framework net8.0 --use-program-main
+dotnet new console --name YOUR_PROJECT_NAME --use-program-main
 ```
 ![alt text](img/vscode-create-project.png)
 
@@ -184,11 +184,85 @@ dotnet new console --framework net8.0 --use-program-main
 
 ![alt text](img/vscode-run-add-config.png)
 
-Появится список доступных конфигураций. Нам подойдет `.NET 5+ and .NET Core`. Выбираем его.
+Появится список доступных конфигураций. Нам нужен `C#`. Выбираем его.
 
-![alt text](img/vscode-config-options.png)
+<img width="608" height="160" alt="image" src="https://github.com/user-attachments/assets/301632d5-9907-4fd2-bc6f-cddb4dabb0f2" />
 
 Во-первых, создастся папка с именем `.vscode`, в которой хранятся файлы с настройками проекта в рамках VS Code. Во-вторых, в папке создадутся файлы с конфигурациями запуска программы. В них можно задавать значения параметров, чтобы менять поведение запуска программы. Например, выбрать встроенную в VS Code консоль или внешнюю и т.д.
+
+Замените текста в файле launch.json на следующий:
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Project",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/YOUR_PROJECT_NAME.csproj"
+        }
+    ]
+}
+```
+Не забудьте, поменять `YOUR_PROJECT_NAME` на имя с файлом проекта, который вы создали. В моем примере это `TestCreateProject.csproj`
+
+<img width="942" height="338" alt="image" src="https://github.com/user-attachments/assets/532c4bc3-9ecd-45b0-bece-8848e1790ba1" />
+
+Обратите внимание, что вывод будет в `Debug Console`. А в нее выводится не только вывод вашей программы, но и вспомогательная информация (желтый текст).
+
+<img width="1188" height="249" alt="image" src="https://github.com/user-attachments/assets/1d4d7d9b-2577-4c81-9bb5-ef6d3463fcc8" />
+
+Для типа конфигурации `"type": "dotnet"` поменять это поведение нельзя в VS Code. Но если сильно хочется, то можно еще поплясать с бубном и переделать настройки на `"type": "coreclr"`.
+
+Тогда в `launch.json` должен быть такой конфиг:
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Project",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/bin/Debug/net8.0/TestProjectRider.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "integratedTerminal" // или "externalTerminal"
+    }
+  ]
+}
+```
+
+Тут уже есть настройка `"console": "integratedTerminal"` - вывод в терминал. По желанию можно запускать отдельное окно с консолью, для этого поменяйте значение на `externalTerminal`.
+
+Важно! Обратите внимание, что сейчас в `program` передается путь не до файла проектом, а до скомпилированной библиотеки с вашей программой. Лежит она по пути `ВАША_ПАПКА_С_ПРОЕКТОМ/bin/Debug/netВЕРСИЯ/ИМЯ_ПРОЕКТА.dll`. При типе запуска `dotnet` и передаче файла с проектомм у вас на самом деле выполняется два действия: билд проекта + запуск. Но при типе запуска `coreclr`, он не умеет сам билдить, он тупо запускает то, что уже сбилдено до него. Поэтому появилась доп настройка, в частности `"preLaunchTask": "build"` - это настройка говорит, какую именно задачу нужно выполнить до того, как делать запуск проекта. Здесь и должно быть настроено как произвести билд.
+
+Нужно создать рядом с `launch.json` еще один файл `tasks.json` c конифгом:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/YOUR_PROJECT_NAME.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
+```
+
+В этом файле мы настроили задачу с именем `build` (строчка `"label": "build"`). Теперь в `launch.json` настройка `"preLaunchTask": "build"` знает, что ей нужно делать. Имя задачи из `tasks.json` должно совпадать с именем вызываемой задачи в настройке `preLaunchTask`/
 
 ![alt text](img/vscode-config.png)
 
