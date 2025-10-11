@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FillWords", "FillWords", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempProject", "TempProject\TempProject.csproj", "{707FFD23-0B84-45B5-97A4-6BB97FD8E734}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StrategyGame", "StrategyGame", "{02414A1B-66F7-439B-BBE0-8D8121C41964}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.ConsoleGame", "StrategyGame.Console\StrategyGame.ConsoleGame.csproj", "{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,10 @@ Global
 		{707FFD23-0B84-45B5-97A4-6BB97FD8E734}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{707FFD23-0B84-45B5-97A4-6BB97FD8E734}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{707FFD23-0B84-45B5-97A4-6BB97FD8E734}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +113,7 @@ Global
 		{6B40C3CD-336A-4386-91AF-648447F49775} = {98305D57-DEEA-435C-9C16-A98E1B827B79}
 		{831697C2-906C-4A35-BDE1-D89B379D5456} = {98305D57-DEEA-435C-9C16-A98E1B827B79}
 		{D33F1800-DE2E-4FD4-87C6-B3B909DA521E} = {98305D57-DEEA-435C-9C16-A98E1B827B79}
+		{0A9AEE95-E35D-477E-AD01-73AAFC7E2154} = {02414A1B-66F7-439B-BBE0-8D8121C41964}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA9E177-3170-48B4-9805-43BC4E3C4D45}
