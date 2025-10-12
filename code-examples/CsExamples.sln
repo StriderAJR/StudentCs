@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempProject", "TempProject\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StrategyGame", "StrategyGame", "{02414A1B-66F7-439B-BBE0-8D8121C41964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.ConsoleGame", "StrategyGame.Console\StrategyGame.ConsoleGame.csproj", "{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.ConsoleGame", "StrategyGame\StrategyGame.Console\StrategyGame.ConsoleGame.csproj", "{0A9AEE95-E35D-477E-AD01-73AAFC7E2154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
