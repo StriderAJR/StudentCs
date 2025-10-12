@@ -12,6 +12,16 @@ static class Programm
         // отключаем отображение курсора
         Console.CursorVisible = false;
 
+        int menuButtonIndex = MainMenu();
+        if (menuButtonIndex == 0)
+            // OK - start game
+            StartGame();
+
+        // else - exit
+    }
+
+    private static int MainMenu()
+    {
         int selectedBtnIndex = 0;
         string[] buttons = ["Ok", "Cancel"];
         bool shouldContinue = true;
@@ -42,11 +52,7 @@ static class Programm
             }
         }
 
-        if (selectedBtnIndex == 0)
-            // OK - start game
-            StartGame();
-
-        // else - exit
+        return selectedBtnIndex;
     }
 
     private static void StartGame()
