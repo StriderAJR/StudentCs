@@ -4,6 +4,7 @@ namespace Table
 {
     public class YieldExample
     {
+        // just comment
         public IEnumerator GetTestEnumerator()
         {
             for (int i = 0; i < 6; i++)
