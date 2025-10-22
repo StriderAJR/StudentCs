@@ -1,16 +1,47 @@
-﻿using System.Text;
+﻿using System.Runtime.Intrinsics.Arm;
+using System.Text;
 
 namespace StrategyGame.ConsoleGame;
 
+public enum MapCell
+{
+    Empty,
+    Wall,
+    Gold,
+    Wood,
+    Stone
+}
+
+public static class MapExtensions
+{
+    public static char ToChar(this MapCell cell)
+    {
+        switch (cell)
+        {
+            case MapCell.Empty: return ' ';
+            case MapCell.Wall: return '#';
+            case MapCell.Gold: return 'G';
+            case MapCell.Wood: return 'W';
+            case MapCell.Stone: return 'S';
+        }
+
+        throw new ArgumentException("Unknown cell");
+    }
+}
+
 static class Programm
 {
-    private static char[,] map = GenerateMap();
+    private static MapCell[,] map = GenerateMap(Console.WindowHeight-1, Console.WindowWidth);
     private static int playerX = 1, playerY = 1;
 
     private static void Main()
     {
         // отключаем отображение курсора
         Console.CursorVisible = false;
+
+        // ограничить размер буфера, чтобы не появлялись полосы прокрутки
+        Console.BufferHeight = Console.WindowHeight;
+        Console.BufferWidth = Console.WindowWidth;
 
         int menuButtonIndex = MainMenu();
         if (menuButtonIndex == 0)
@@ -57,6 +88,7 @@ static class Programm
 
     private static void StartGame()
     {
+        ClearScreen();
         while (true)
         {
             PrintMap();
@@ -80,19 +112,21 @@ static class Programm
         }
     }
 
-    private static char[,] GenerateMap()
+    private static MapCell[,] GenerateMap(int height, int width)
     {
-        char[,] map = new char[10, 10];
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++)
-                map[i, j] = (i == 0 || i == 9 || j == 0 || j == 9) ? '#' : ' ';
+        MapCell[,] map = new MapCell[height, width];
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++)
+                map[i, j] = (i == 0 || i == height-1 || j == 0 || j == width-1) 
+                    ? MapCell.Wall 
+                    : MapCell.Empty;
 
         return map;
     }
 
     static void MovePlayer(int shiftX, int shiftY)
     {
-        if (map[playerX + shiftX, playerY + shiftY] != '#')
+        if (map[playerX + shiftX, playerY + shiftY] != MapCell.Wall)
         {
             playerY += shiftY;
             playerX += shiftX;
@@ -102,23 +136,12 @@ static class Programm
     private static void PrintMap()
     {
         // draw map
-
-        // Simple way to print map, but with flickering:
-        // Console.ForegroundColor = ConsoleColor.Gray;
-        //for (int i = 0; i < map.GetLength(0); i++)
-        //{
-        //    for(int j = 0; j < map.GetLength(1); j++)
-        //        Console.Write(string.Join("", map[i,j]));
-        //    Console.WriteLine();
-        //}
-
-        // More complex, but without flickering (redraw over old drawing):
         StringBuilder sb = new StringBuilder();
         sb.Clear();
         for (int i = 0; i < map.GetLength(0); i++)
         {
             for (int j = 0; j < map.GetLength(1); j++)
-                sb.Append(map[i, j]);
+                sb.Append(map[i, j].ToChar());
             sb.AppendLine();
         }
         Console.ForegroundColor = ConsoleColor.Gray;
@@ -234,5 +257,15 @@ static class Programm
                 Console.ResetColor();
             }
         }
+    }
+
+    static void ClearScreen()
+    {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i <= Console.WindowHeight; i++) {
+            sb.AppendLine(new string(' ', Console.WindowWidth));
+        }
+        Console.SetCursorPosition(0,0);
+        Console.Write(sb.ToString());
     }
 }
