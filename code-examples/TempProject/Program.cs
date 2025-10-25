@@ -103,11 +103,11 @@ namespace Table
             //Example2();
             //Example3();
 
-            ComplexNumber cn1 = new ComplexNumber(1, 1);
+            ComplexNumber qwerty = new ComplexNumber(1, 1);
             ComplexNumber cn2 = new ComplexNumber(2, 1);
 
-            Console.WriteLine(cn1 + cn2);
-            Console.WriteLine(cn1 * 5);
+            Console.WriteLine(qwerty + cn2);
+            Console.WriteLine(qwerty * 5);
             Console.WriteLine(cn2++);
             Console.WriteLine(++cn2);
 
