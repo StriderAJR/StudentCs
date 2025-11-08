@@ -1,4 +1,4 @@
-using System;
+using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame.UI;
 
@@ -29,14 +29,21 @@ public sealed class Button
 
     public void Draw(bool selected)
     {
-        int bx = StartX();
-        Console.SetCursorPosition(bx, Y);
+        ConsoleBuffer buffer = GameConsole.Buffer;
+        int buttonStartX = StartX();
+        var originalForeground = buffer.ForegroundColor;
+        var originalBackground = buffer.BackgroundColor;
+
         if (selected)
         {
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
+            buffer.BackgroundColor = ConsoleColor.Gray;
+            buffer.ForegroundColor = ConsoleColor.Black;
         }
-        Console.Write(Rendered);
-        Console.ResetColor();
+
+        buffer.SetCursorPosition(buttonStartX, Y);
+        buffer.Write(Rendered);
+
+        buffer.ForegroundColor = originalForeground;
+        buffer.BackgroundColor = originalBackground;
     }
 }

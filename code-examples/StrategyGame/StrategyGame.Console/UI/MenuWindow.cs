@@ -1,4 +1,4 @@
-﻿using System;
+﻿using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame.UI;
 
@@ -73,8 +73,8 @@ public class MenuWindow : ConsoleWindow<int>
         WindowSize windowSize,
         ButtonPosition buttonPosition)
     {
-        int consoleWidth = Console.WindowWidth;
-        int consoleHeight = Console.WindowHeight;
+        int consoleWidth = GameConsole.WindowWidth;
+        int consoleHeight = GameConsole.WindowHeight;
 
         if (windowSize == WindowSize.FullScreen)
             return (consoleWidth, consoleHeight, new Coordinate(0, 0));
@@ -98,17 +98,17 @@ public class MenuWindow : ConsoleWindow<int>
         {
             // Horizontal layout: compute required horizontal space
             int n = items.Length;
-            int[] btnLens = new int[n];
-            int totalBtnLen = 0;
+            int[] buttonLengths = new int[n];
+            int totalButtonLength = 0;
             for (int i = 0; i < n; i++)
             {
                 int len = (items[i]?.Length ?? 0) + 4; // "[ {text} ]" => +4
-                btnLens[i] = len;
-                totalBtnLen += len;
+                buttonLengths[i] = len;
+                totalButtonLength += len;
             }
 
             int minSpacing = 3; // minimal spaces between buttons
-            int totalNeededInterior = totalBtnLen + Math.Max(0, (n - 1) * minSpacing);
+            int totalNeededInterior = totalButtonLength + Math.Max(0, (n - 1) * minSpacing);
 
             // interior width -> window width (+4 padding)
             int itemsWidth = totalNeededInterior + 4;
@@ -175,7 +175,7 @@ public class MenuWindow : ConsoleWindow<int>
         {
             DrawMenu();
 
-            ConsoleKey input = Console.ReadKey(true).Key;
+            ConsoleKey input = ReadKey(true).Key;
             switch (input)
             {
                 case ConsoleKey.Enter:
@@ -206,11 +206,15 @@ public class MenuWindow : ConsoleWindow<int>
         if (buttons == null || buttons.Length == 0)
             return;
 
+        ConsoleBuffer buffer = GameConsole.Buffer;
+
         for (int i = 0; i < buttons.Length; i++)
         {
-            var b = buttons[i];
-            b.Draw(selected: selectedItemIndex == i);
+            var button = buttons[i];
+            button.Draw(selected: selectedItemIndex == i);
         }
+
+        buffer.Flush();
     }
 
     // Build buttons positions and sizes based on layout rules.
@@ -246,30 +250,30 @@ public class MenuWindow : ConsoleWindow<int>
             int y = messageCount > 0 ? contentStartY : baseY;
 
             // calculate button rendered lengths
-            int[] lens = new int[n];
+            int[] buttonLengths = new int[n];
             for (int i = 0; i < n; i++)
-                lens[i] = (items[i]?.Length ?? 0) + 4; // "[ {text} ]"
+                buttonLengths[i] = (items[i]?.Length ?? 0) + 4; // "[ {text} ]"
 
             if (n == 1)
             {
                 int centerX = position.X + width / 2;
-                result[0] = new Button(items[0], centerX, y, lens[0], centered: true);
+                result[0] = new Button(items[0], centerX, y, buttonLengths[0], centered: true);
             }
             else if (n == 2)
             {
                 int start0 = interiorStart;
-                int start1 = interiorEnd - lens[1] + 1;
-                result[0] = new Button(items[0], start0, y, lens[0]);
-                result[1] = new Button(items[1], start1, y, lens[1]);
+                int start1 = interiorEnd - buttonLengths[1] + 1;
+                result[0] = new Button(items[0], start0, y, buttonLengths[0]);
+                result[1] = new Button(items[1], start1, y, buttonLengths[1]);
             }
             else if (n == 3)
             {
                 int start0 = interiorStart;
                 int centerX = position.X + width / 2;
-                int start2 = interiorEnd - lens[2] + 1;
-                result[0] = new Button(items[0], start0, y, lens[0]);
-                result[1] = new Button(items[1], centerX, y, lens[1], centered: true);
-                result[2] = new Button(items[2], start2, y, lens[2]);
+                int start2 = interiorEnd - buttonLengths[2] + 1;
+                result[0] = new Button(items[0], start0, y, buttonLengths[0]);
+                result[1] = new Button(items[1], centerX, y, buttonLengths[1], centered: true);
+                result[2] = new Button(items[2], start2, y, buttonLengths[2]);
             }
             else
             {
@@ -277,13 +281,13 @@ public class MenuWindow : ConsoleWindow<int>
                 for (int i = 0; i < n; i++)
                 {
                     double center = interiorStart + ((i + 1) * avail) / (n + 1);
-                    int startX = (int)Math.Round(center - lens[i] / 2.0);
+                    int startX = (int)Math.Round(center - buttonLengths[i] / 2.0);
 
                     // clamp
                     startX = Math.Max(startX, interiorStart);
-                    startX = Math.Min(startX, interiorEnd - lens[i] + 1);
+                    startX = Math.Min(startX, interiorEnd - buttonLengths[i] + 1);
 
-                    result[i] = new Button(items[i], startX, y, lens[i]);
+                    result[i] = new Button(items[i], startX, y, buttonLengths[i]);
                 }
             }
         }
@@ -294,18 +298,14 @@ public class MenuWindow : ConsoleWindow<int>
                 int contentStart = contentStartY;
 
                 if (n == 1)
-                {
-                    int centerX = position.X + width / 2;
-                    result[0] = new Button(items[0], centerX, contentStart, (items[0]?.Length ?? 0) + 4,
-                        centered: true);
-                }
+                    result[0] = new Button(items[0], position.X + width / 2, contentStart,
+                        (items[0]?.Length ?? 0) + 4, centered: true);
                 else if (n == 2)
                 {
-                    int left = position.X + 4;
-                    int right = interiorEnd - ((items[1]?.Length ?? 0) + 4) + 1;
-                    result[0] = new Button(items[0], left, contentStart, (items[0]?.Length ?? 0) + 4);
-                    result[1] = new Button(items[1], right, contentStart,
-                        (items[1]?.Length ?? 0) + 4);
+                    result[0] = new Button(items[0], position.X + 4, contentStart,
+                        (items[0]?.Length ?? 0) + 4);
+                    result[1] = new Button(items[1], interiorEnd - ((items[1]?.Length ?? 0) + 4) + 1,
+                        contentStart, (items[1]?.Length ?? 0) + 4);
                 }
                 else
                 {

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame.UI;
 
@@ -13,6 +13,8 @@ public abstract class ConsoleWindow<TResult>
     protected readonly string? title;
     protected readonly string? message;
 
+    protected ConsoleBuffer Buffer => GameConsole.Buffer;
+
     /// <summary>
     /// Custom constructor: explicit width/height and explicit position
     /// </summary>
@@ -22,8 +24,8 @@ public abstract class ConsoleWindow<TResult>
         this.message = message;
         this.title = title;
 
-        int consoleWidth = Console.WindowWidth;
-        int consoleHeight = Console.WindowHeight;
+        int consoleWidth = GameConsole.WindowWidth;
+        int consoleHeight = GameConsole.WindowHeight;
 
         this.width = Math.Clamp(width, 1, consoleWidth);
         this.height = Math.Clamp(height, 1, consoleHeight);
@@ -49,8 +51,8 @@ public abstract class ConsoleWindow<TResult>
         this.message = message;
         this.title = title;
 
-        int consoleWidth = Console.WindowWidth;
-        int consoleHeight = Console.WindowHeight;
+        int consoleWidth = GameConsole.WindowWidth;
+        int consoleHeight = GameConsole.WindowHeight;
         int effWidth;
         int effHeight;
 
@@ -108,6 +110,7 @@ public abstract class ConsoleWindow<TResult>
     public TResult Show()
     {
         TResult result = ShowInternal();
+        // restore console (buffer) after window closes
         ClearScreen();
         return result;
     }
@@ -119,66 +122,39 @@ public abstract class ConsoleWindow<TResult>
     protected abstract TResult ShowInternal();
 
     /// <summary>
-    /// Очищает весь видимый экран, заполняя каждую строку пробелами через
-    /// Console.Write() (не использует Console.Clear()).
-    /// Восстанавливает цвета и видимость курсора, в конце устанавливает
-    /// курсор в верхний левый угол (0,0).
+    /// Clear only area covered by window in buffer (not whole screen)
     /// </summary>
-    private void ClearScreen()
+    protected void ClearScreen()
     {
-        var originalFg = Console.ForegroundColor;
-        var originalBg = Console.BackgroundColor;
-        bool originalCursorVisible = Console.CursorVisible;
-
-        try
+        ConsoleBuffer buffer = Buffer;
+        // clear window area
+        for (int y = position.Y; y < position.Y + height && y < buffer.WindowHeight; y++)
+        for (int x = position.X; x < position.X + width && x < buffer.WindowWidth; x++)
         {
-            Console.CursorVisible = false;
-
-            int w = Math.Max(Console.WindowWidth, 1);
-            int h = Math.Max(Console.WindowHeight, 1);
-
-            string blankLine = new string(' ', w);
-
-            for (int row = 0; row < h; row++)
-            {
-                Console.SetCursorPosition(0, row);
-                Console.Write(blankLine);
-            }
-
-            // position cursor like Console.Clear()
-            Console.SetCursorPosition(0, 0);
+            buffer.SetCursorPosition(x, y);
+            buffer.Write(' ');
         }
-        finally
-        {
-            Console.ForegroundColor = originalFg;
-            Console.BackgroundColor = originalBg;
-            Console.CursorVisible = originalCursorVisible;
-        }
+
+        buffer.Flush();
     }
 
-    /// <summary>
-    /// Hook kept for future use but not called from the base ctor to avoid
-    /// virtual calls during construction.
-    /// Derived types should calculate auto sizes themselves and call the
-    /// custom ctor.
-    /// </summary>
-    protected virtual void AdjustAutoSize(ref int width, ref int height,
-        int consoleWidth, int consoleHeight)
-    {
-        // no-op by default
-    }
+    protected ConsoleKeyInfo ReadKey(bool intercept = false) => GameConsole.ReadKey(intercept);
 
     /// <summary>
-    /// Рисует окно: рамку, заголовок и текст
+    /// Рисует окно: рамка, заголовок и текст
     /// </summary>
     public virtual void Draw()
     {
-        Console.ForegroundColor = ConsoleColor.Gray;
+        ConsoleBuffer buffer = Buffer;
+        var originalForegroundColor = buffer.ForegroundColor;
+        var originalBackgroundColor = buffer.BackgroundColor;
+
+        buffer.ForegroundColor = ConsoleColor.Gray;
 
         // рамка
         for (int i = 0; i < height; i++)
         {
-            Console.SetCursorPosition(position.X, position.Y + i);
+            buffer.SetCursorPosition(position.X, position.Y + i);
             for (int j = 0; j < width; j++)
             {
                 char c =
@@ -188,15 +164,15 @@ public abstract class ConsoleWindow<TResult>
                     i == height - 1 && j == width - 1 ? '┘' :
                     i == 0 || i == height - 1 ? '─' :
                     j == 0 || j == width - 1 ? '│' : ' ';
-                Console.Write(c);
+                buffer.Write(c);
             }
         }
 
         // заголовок
         if (!string.IsNullOrEmpty(title))
         {
-            Console.SetCursorPosition(position.X + 2, position.Y);
-            Console.Write($"[{title}]");
+            buffer.SetCursorPosition(position.X + 2, position.Y);
+            buffer.Write($"[{title}]");
         }
 
         // текст
@@ -205,11 +181,14 @@ public abstract class ConsoleWindow<TResult>
             string[] lines = message.Split('\n');
             for (int i = 0; i < lines.Length && i < height - 2; i++)
             {
-                Console.SetCursorPosition(position.X + 2, position.Y + 1 + i);
-                Console.Write(lines[i]);
+                buffer.SetCursorPosition(position.X + 2, position.Y + 1 + i);
+                buffer.Write(lines[i]);
             }
         }
 
-        Console.ResetColor();
+        buffer.ForegroundColor = originalForegroundColor;
+        buffer.BackgroundColor = originalBackgroundColor;
+
+        buffer.Flush();
     }
 }
