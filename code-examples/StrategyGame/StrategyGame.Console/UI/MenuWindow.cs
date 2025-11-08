@@ -59,9 +59,18 @@ public class MenuWindow : ConsoleWindow<int>
         int itemsWidth = maxItemLen + 6;       // "[ {item} ]" + small margin
         int effWidth = Math.Clamp(Math.Max(messageWidth, itemsWidth), 10, consoleWidth);
 
-        int messageHeight = messageLines.Length + 2;
-        int itemsHeight = items == null || items.Length == 0 ? 0 : (items.Length == 1 ? 3 : items.Length * 2 + 1);
-        int effHeight = Math.Clamp(Math.Max(messageHeight, itemsHeight), 3, consoleHeight);
+        // compute interior rows:
+        // - message lines
+        // - one separator row after message (when message exists)
+        // - rows required for items: 1 row for <=2 items, or (items*2 - 1) for vertical layout
+        int itemsInteriorRows = 0;
+        if (items != null && items.Length > 0)
+            itemsInteriorRows = items.Length <= 2 ? 1 : items.Length * 2 - 1;
+
+        int separator = messageLines.Length > 0 ? 1 : 0;
+        int interiorRows = messageLines.Length + separator + itemsInteriorRows;
+
+        int effHeight = Math.Clamp(interiorRows + 2, 3, consoleHeight); // +2 for top/bottom borders
 
         Coordinate effPosition = windowPosition switch
         {
@@ -123,21 +132,47 @@ public class MenuWindow : ConsoleWindow<int>
         if (items == null || items.Length == 0)
             return;
 
-        int baseY = position.Y + height - 3;
+        string[] messageLines = string.IsNullOrEmpty(message) ? Array.Empty<string>() : message.Split('\n');
+        int messageCount = messageLines.Length;
+        int separator = messageCount > 0 ? 1 : 0;
 
-        if (items.Length == 1)
-            DrawButton(items[0], 0, position.X + width / 2, baseY, centered: true);
-        else if (items.Length == 2)
+        // If there's a message, top-align buttons below message + one separator row.
+        if (messageCount > 0)
         {
-            DrawButton(items[0], 0, position.X + 4, baseY);
-            DrawButton(items[1], 1, position.X + width - items[1].Length - 6, baseY);
+            int contentStartY = position.Y + 1 + messageCount + separator;
+
+            if (items.Length == 1)
+                DrawButton(items[0], 0, position.X + width / 2, contentStartY, centered: true);
+            else if (items.Length == 2)
+            {
+                DrawButton(items[0], 0, position.X + 4, contentStartY);
+                DrawButton(items[1], 1, position.X + width - items[1].Length - 6, contentStartY);
+            }
+            else
+            {
+                for (int i = 0; i < items.Length; i++)
+                    DrawButton(items[i], i, position.X + width / 2, contentStartY + i * 2, centered: true);
+            }
         }
         else
         {
-            int totalHeight = items.Length * 2 - 1;
-            int startY = position.Y + (height - totalHeight) / 2;
-            for (int i = 0; i < items.Length; i++)
-                DrawButton(items[i], i, position.X + width / 2, startY + i * 2, centered: true);
+            // legacy behavior when there's no message (centered / bottom layout)
+            int baseY = position.Y + height - 3;
+
+            if (items.Length == 1)
+                DrawButton(items[0], 0, position.X + width / 2, baseY, centered: true);
+            else if (items.Length == 2)
+            {
+                DrawButton(items[0], 0, position.X + 4, baseY);
+                DrawButton(items[1], 1, position.X + width - items[1].Length - 6, baseY);
+            }
+            else
+            {
+                int totalHeight = items.Length * 2 - 1;
+                int startY = position.Y + (height - totalHeight) / 2;
+                for (int i = 0; i < items.Length; i++)
+                    DrawButton(items[i], i, position.X + width / 2, startY + i * 2, centered: true);
+            }
         }
     }
 

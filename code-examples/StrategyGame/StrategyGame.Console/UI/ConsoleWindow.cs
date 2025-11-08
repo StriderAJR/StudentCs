@@ -106,7 +106,7 @@ public abstract class ConsoleWindow<TResult>
     /// Очищает весь видимый экран, заполняя каждую строку пробелами через Console.Write() (не использует Console.Clear()).
     /// Восстанавливает цвета и видимость курсора, в конце устанавливает курсор в верхний левый угол (0,0).
     /// </summary>
-    protected void ClearScreen()
+    private void ClearScreen()
     {
         var originalFg = Console.ForegroundColor;
         var originalBg = Console.BackgroundColor;
