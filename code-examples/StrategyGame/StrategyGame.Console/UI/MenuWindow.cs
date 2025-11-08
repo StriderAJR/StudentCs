@@ -2,7 +2,7 @@
 
 namespace StrategyGame.ConsoleGame.UI;
 
-public class MenuWindow : ConsoleWindow
+public class MenuWindow : ConsoleWindow<int>
 {
     private readonly string[] items;
     private int selectedItemIndex = 0;
@@ -83,10 +83,9 @@ public class MenuWindow : ConsoleWindow
     }
 
     /// <summary>
-    /// Отобразить меню
+    /// Interactive logic moved here; base.Show() will call this then ClearScreen().
     /// </summary>
-    /// <returns>Возвращает индекс выбранной кнопки</returns>
-    public int Show()
+    protected override int ShowInternal()
     {
         bool shouldContinue = true;
         while (shouldContinue)

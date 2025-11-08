@@ -5,7 +5,7 @@ namespace StrategyGame.ConsoleGame.UI;
 /// <summary>
 /// Окно с полем ввода текста и кнопкой Ok (Enter)
 /// </summary>
-public class InputWindow : ConsoleWindow
+public class InputWindow : ConsoleWindow<string>
 {
     private string input = string.Empty;
 
@@ -20,16 +20,15 @@ public class InputWindow : ConsoleWindow
     /// <summary>
     /// Auto constructor: size/position by enums
     /// </summary>
-    public InputWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center,
-                       WindowSize windowSize = WindowSize.Auto)
+    public InputWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
         : base(message, title, windowPosition, windowSize)
     {
     }
 
     /// <summary>
-    /// Отображает окно с полем ввода и возвращает введённый текст после нажатия Enter
+    /// Interactive logic moved here; base.Show() will call this then ClearScreen().
     /// </summary>
-    public string Show()
+    protected override string ShowInternal()
     {
         bool finished = false;
 
@@ -66,6 +65,4 @@ public class InputWindow : ConsoleWindow
 
         return input;
     }
-
-    // Optionally override AdjustAutoSize if special input-field sizing needed in Auto mode.
 }

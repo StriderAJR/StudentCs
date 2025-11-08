@@ -1,9 +1,11 @@
-﻿namespace StrategyGame.ConsoleGame.UI;
+﻿using System;
+
+namespace StrategyGame.ConsoleGame.UI;
 
 /// <summary>
 /// Базовое консольное окно с рамкой, опциональным заголовком и текстом
 /// </summary>
-public abstract class ConsoleWindow
+public abstract class ConsoleWindow<TResult>
 {
     protected readonly Coordinate position;
     protected readonly int width;
@@ -71,11 +73,11 @@ public abstract class ConsoleWindow
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Right => new Coordinate(
-                Math.Max(0, consoleWidth - effWidth), 
+                Math.Max(0, consoleWidth - effWidth),
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
             WindowPosition.Bottom => new Coordinate(
-                Math.Max(0, (consoleWidth - effWidth) / 2), 
+                Math.Max(0, (consoleWidth - effWidth) / 2),
                 Math.Max(0, consoleHeight - effHeight)),
             _ => new Coordinate(0, 0)
         };
@@ -86,13 +88,24 @@ public abstract class ConsoleWindow
     }
 
     /// <summary>
-    /// Hook kept for future use but not called from the base ctor to avoid virtual calls during construction.
-    /// Derived types should calculate auto sizes themselves and call the custom ctor.
+    /// Template Show: calls derived ShowInternal and guarantees ClearScreen() runs before returning.
     /// </summary>
-    protected virtual void AdjustAutoSize(ref int width, ref int height, int consoleWidth, int consoleHeight)
+    public TResult Show()
     {
-        // no-op by default
+        try
+        {
+            return ShowInternal();
+        }
+        finally
+        {
+            ClearScreen();
+        }
     }
+
+    /// <summary>
+    /// Each derived window implements its interactive logic and returns its typed result.
+    /// </summary>
+    protected abstract TResult ShowInternal();
 
     /// <summary>
     /// Очищает весь видимый экран, заполняя каждую строку пробелами через Console.Write() (не использует Console.Clear()).
@@ -131,9 +144,18 @@ public abstract class ConsoleWindow
     }
 
     /// <summary>
+    /// Hook kept for future use but not called from the base ctor to avoid virtual calls during construction.
+    /// Derived types should calculate auto sizes themselves and call the custom ctor.
+    /// </summary>
+    protected virtual void AdjustAutoSize(ref int width, ref int height, int consoleWidth, int consoleHeight)
+    {
+        // no-op by default
+    }
+
+    /// <summary>
     /// Рисует окно: рамку, заголовок и текст
     /// </summary>
-    protected virtual void Draw()
+    public virtual void Draw()
     {
         Console.ForegroundColor = ConsoleColor.Gray;
 
