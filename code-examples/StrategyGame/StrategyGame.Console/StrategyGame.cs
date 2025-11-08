@@ -1,6 +1,8 @@
 ﻿using StrategyGame.ConsoleGame.UI;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
 using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace StrategyGame.ConsoleGame;
 
@@ -12,20 +14,96 @@ public class StrategyGame(uint width, uint height)
     private Player player;
 
     // TODO туман войны
-    // TODO загружать карту из файла
 
     public void Start()
     {
+        // Choose and load map (may return player position if map contains '@')
+        Coordinate? initialPlayerPos = ChooseAndLoadMap();
 
-        string playerName = new InputWindow("Введите имя игрока").Show();
-
-        PlayerType playerType = (PlayerType) new MenuWindow("Выберите тип игрока",
-            Enum.GetNames(typeof(PlayerType))).Show();
-
-        map = GenerateMap(Height, Width);
-        player = new Player(playerName, playerType, new Coordinate(1, 1));
+        // Ask user for player name/type and create player (place on first free cell if needed)
+        AskPlayerInfoAndCreatePlayer(initialPlayerPos);
 
         ClearScreen();
+        RunGameLoop();
+    }
+
+    private Coordinate? ChooseAndLoadMap()
+    {
+        string mapsDir = Path.Combine(AppContext.BaseDirectory, "maps");
+        string[] files = Array.Empty<string>();
+        if (Directory.Exists(mapsDir))
+        {
+            files = Directory.GetFiles(mapsDir)
+                .Where(f => !string.IsNullOrEmpty(f))
+                .ToArray();
+        }
+
+        string[] menuItems;
+        if (files.Length == 0)
+        {
+            menuItems = new[] { "Generate default map" };
+        }
+        else
+        {
+            // show file names + an option to generate default
+            menuItems = new string[files.Length + 1];
+            menuItems[0] = "Generate default map";
+            for (int i = 0; i < files.Length; i++)
+                menuItems[i + 1] = Path.GetFileName(files[i]);
+        }
+
+        int selected = new MenuWindow("Choose map to open:", menuItems).Show();
+
+        Coordinate? playerPos = null;
+
+        if (selected == 0)
+        {
+            // generate default
+            map = GenerateMap(Height, Width);
+        }
+        else
+        {
+            // load selected file (index-1)
+            string chosenPath = files[selected - 1];
+            map = LoadMapFromFile(chosenPath, out playerPos);
+        }
+
+        return playerPos;
+    }
+
+    private void AskPlayerInfoAndCreatePlayer(Coordinate? initialPos)
+    {
+        string playerName = new InputWindow("Введите имя игрока").Show();
+
+        PlayerType playerType = (PlayerType)new MenuWindow("Выберите тип игрока",
+            Enum.GetNames(typeof(PlayerType))).Show();
+
+        // If map didn't contain player, place first free cell
+        if (initialPos == null)
+        {
+            var found = FindFirstEmptyCell();
+            initialPos = found ?? new Coordinate(1, 1);
+        }
+
+        player = new Player(playerName, playerType, initialPos.Value);
+    }
+
+    private Coordinate? FindFirstEmptyCell()
+    {
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                if (map[i, j] == MapCell.Empty)
+                    return new Coordinate(i, j);
+            }
+        }
+
+        return null;
+    }
+
+    private void RunGameLoop()
+    {
         while (true)
         {
             PrintMap();
@@ -59,6 +137,49 @@ public class StrategyGame(uint width, uint height)
                     : MapCell.Empty;
 
         return map;
+    }
+
+    private MapCell[,] LoadMapFromFile(string path, out Coordinate? playerPos)
+    {
+        playerPos = null;
+        // initialize with default generated map (so borders are walls)
+        MapCell[,] result = GenerateMap(Height, Width);
+
+        string[] lines = File.ReadAllLines(path);
+        int fileH = lines.Length;
+        int fileW = lines.Any() ? lines.Max(l => l.Length) : 0;
+
+        int maxH = Math.Min((int)Height, fileH);
+        int maxW = Math.Min((int)Width, fileW);
+
+        for (int i = 0; i < maxH; i++)
+        {
+            string line = lines[i];
+            for (int j = 0; j < maxW; j++)
+            {
+                char c = j < line.Length ? line[j] : ' ';
+                switch (c)
+                {
+                    case '#':
+                        result[i, j] = MapCell.Wall; break;
+                    case 'G':
+                        result[i, j] = MapCell.Gold; break;
+                    case 'W':
+                        result[i, j] = MapCell.Wood; break;
+                    case 'S':
+                        result[i, j] = MapCell.Stone; break;
+                    case '@':
+                        // player marker -> leave cell empty but remember position
+                        result[i, j] = MapCell.Empty;
+                        playerPos = new Coordinate(i, j);
+                        break;
+                    default:
+                        result[i, j] = MapCell.Empty; break;
+                }
+            }
+        }
+
+        return result;
     }
 
     private void PrintMap()

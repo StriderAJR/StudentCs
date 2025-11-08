@@ -14,7 +14,7 @@ static class Program
         Console.BufferHeight = Console.WindowHeight;
         Console.BufferWidth = Console.WindowWidth;
 
-        MenuWindow mainMenu = new MenuWindow("Do you want to start game?", new[] { "Ok", "Cancel" }, "Menu");
+        MenuWindow mainMenu = new MenuWindow("Do you want to start game?", ["Ok", "Cancel"], "Menu");
         int menuButtonIndex = mainMenu.Show();
         if (menuButtonIndex == 0)
         {
