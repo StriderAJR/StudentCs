@@ -12,13 +12,7 @@ public class Player(string name, PlayerType type, Coordinate position)
 
     public void Move(Coordinate shift)
     {
-        position = new Coordinate(position.X + shift.X, position.Y + shift.Y);
-
-        // Если бы стукртура Coordinate не была бы readonly, то можно было бы записать так:
-        // position.X += shift.X;
-        // position.Y += shift.Y;
-
-        // TODO рассказать про перегрузку операторов
+        position = position + shift;
     }
 
     private static uint CalculateHealth()

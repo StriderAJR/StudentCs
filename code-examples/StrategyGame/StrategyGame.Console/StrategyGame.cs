@@ -15,11 +15,11 @@ public class StrategyGame()
 
     public void Start()
     {
-        // Choose and load map (may return player position if map contains '@')
+        // Выбрать и загрузить карту (может вернуть позицию игрока, если в карте есть '@')
         if (!ChooseAndLoadMap(out Coordinate? initialPlayerPos))
-            return; // no maps available — user was informed
+            return; // карт нет — пользователю показано сообщение
 
-        // Ask user for player name/type and create player (place on first free cell if needed)
+        // Запросить имя и тип игрока и создать игрока (если в карте нет игрока — поставить на первую свободную клетку)
         AskPlayerInfoAndCreatePlayer(initialPlayerPos);
 
         ClearScreen();
@@ -39,23 +39,23 @@ public class StrategyGame()
                 .ToArray();
         }
 
-        // If there are no map files — inform user and abort
+        // Если в папке нет файлов карт — проинформировать пользователя и прервать запуск
         if (files.Length == 0)
         {
             string msg = "В папке 'maps' не найдено ни одной карты.\n" +
                          "Поместите файлы карт в папку и запустите программу снова.\n" +
                          "Нажмите любую клавишу для выхода.";
-            // use ConsoleWindow to show informational message; no result needed
+            // показываем информационное окно; результат не требуется
             new ConsoleWindow<int>(msg, "Нет карт").Show();
             return false;
         }
 
-        // show file names + an option to generate default
+        // Показать список файлов карт для выбора
         string[] menuItems = files.Select(x => Path.GetFileName(x)).ToArray();
 
         int selected = new MenuWindow("Выберите карту:", menuItems, buttonPosition: ButtonPosition.CenterVertically).Show();
 
-        // load selected file (index-1)
+        // Загрузить выбранный файл (по индексу)
         string chosenPath = files[selected];
         map = LoadMapFromFile(chosenPath, out playerPos);
 
@@ -69,7 +69,7 @@ public class StrategyGame()
         PlayerType playerType = (PlayerType)new MenuWindow("Выберите тип игрока",
             Enum.GetNames(typeof(PlayerType))).Show();
 
-        // If map didn't contain player, place first free cell
+        // Если в карте не указана позиция игрока — поставить его на первую свободную клетку
         if (initialPos == null)
         {
             var found = FindFirstEmptyCell();
@@ -99,23 +99,55 @@ public class StrategyGame()
         {
             PrintMap();
 
-            ConsoleKey input = GameConsole.ReadKey().Key;
-            switch (input)
+            ConsoleKey key = GameConsole.ReadKey().Key;
+
+            // Вычислить смещение для клавиш движения
+            Coordinate shift = new Coordinate(0, 0);
+            bool isMoveKey = true;
+
+            switch (key)
             {
                 case ConsoleKey.W:
                 case ConsoleKey.UpArrow:
-                    player.Move(new Coordinate(-1, 0)); break;
+                    shift = new Coordinate(-1, 0); break;
                 case ConsoleKey.S:
                 case ConsoleKey.DownArrow:
-                    player.Move(new Coordinate(1, 0)); break;
+                    shift = new Coordinate(1, 0); break;
                 case ConsoleKey.D:
                 case ConsoleKey.RightArrow:
-                    player.Move(new Coordinate(0, 1)); break;
+                    shift = new Coordinate(0, 1); break;
                 case ConsoleKey.A:
                 case ConsoleKey.LeftArrow:
-                    player.Move(new Coordinate(0, -1)); break;
+                    shift = new Coordinate(0, -1); break;
+                default:
+                    isMoveKey = false; break;
+            }
+
+            if (!isMoveKey)
+                continue;
+
+            if (CanMove(player.position, shift))
+            {
+                player.Move(shift);
             }
         }
+    }
+
+    private bool CanMove(Coordinate playerPos, Coordinate shift)
+    {
+        int targetRow = playerPos.X + shift.X;
+        int targetCol = playerPos.Y + shift.Y;
+
+        // Проверка границ карты
+        if (targetRow < 0 || targetRow >= map.GetLength(0) ||
+            targetCol < 0 || targetCol >= map.GetLength(1))
+            return false;
+
+        // Проверка столкновения со стеной
+        if (map[targetRow, targetCol] == MapCell.Wall)
+            return false;
+
+        return true;
     }
 
     private MapCell[,] LoadMapFromFile(string path, out Coordinate? playerPos)
@@ -144,7 +176,7 @@ public class StrategyGame()
                     case 'S':
                         result[i, j] = MapCell.Stone; break;
                     case '@':
-                        // player marker -> leave cell empty but remember position
+                        // Маркер игрока '@' — оставить клетку пустой, но запомнить позицию
                         result[i, j] = MapCell.Empty;
                         playerPos = new Coordinate(i, j);
                         break;
@@ -159,7 +191,7 @@ public class StrategyGame()
 
     private void PrintMap()
     {
-        // draw map into buffer
+        // Отрисовать карту в буфер
         StringBuilder sb = new StringBuilder();
         sb.Clear();
         for (int i = 0; i < map.GetLength(0); i++)
@@ -173,7 +205,7 @@ public class StrategyGame()
         GameConsole.SetCursorPosition(0, 0);
         GameConsole.Write(sb.ToString());
 
-        // draw player
+        // Отрисовать игрока
         GameConsole.ForegroundColor = ConsoleColor.Red;
         GameConsole.SetCursorPosition(player.Y, player.X);
         GameConsole.Write('@');
