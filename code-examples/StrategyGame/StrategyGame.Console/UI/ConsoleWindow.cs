@@ -3,7 +3,7 @@
 /// <summary>
 /// Базовое консольное окно с рамкой, опциональным заголовком и текстом
 /// </summary>
-public class ConsoleWindow
+public abstract class ConsoleWindow
 {
     protected readonly Coordinate position;
     protected readonly int width;
@@ -35,7 +35,8 @@ public class ConsoleWindow
     /// Note: derived types that need additional sizing (e.g., MenuWindow with buttons) should compute size themselves
     /// and call the custom constructor to avoid virtual calls from base ctor.
     /// </summary>
-    public ConsoleWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
+    public ConsoleWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center,
+                         WindowSize windowSize = WindowSize.Auto)
     {
         this.message = message;
         this.title = title;
@@ -65,11 +66,17 @@ public class ConsoleWindow
         // determine position from enum
         Coordinate effPosition = windowPosition switch
         {
-            WindowPosition.Center => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Center => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Right => new Coordinate(Math.Max(0, consoleWidth - effWidth), Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Right => new Coordinate(
+                Math.Max(0, consoleWidth - effWidth), 
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
-            WindowPosition.Bottom => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), Math.Max(0, consoleHeight - effHeight)),
+            WindowPosition.Bottom => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2), 
+                Math.Max(0, consoleHeight - effHeight)),
             _ => new Coordinate(0, 0)
         };
 
@@ -88,9 +95,45 @@ public class ConsoleWindow
     }
 
     /// <summary>
+    /// Очищает весь видимый экран, заполняя каждую строку пробелами через Console.Write() (не использует Console.Clear()).
+    /// Восстанавливает цвета и видимость курсора, в конце устанавливает курсор в верхний левый угол (0,0).
+    /// </summary>
+    protected void ClearScreen()
+    {
+        var originalFg = Console.ForegroundColor;
+        var originalBg = Console.BackgroundColor;
+        bool originalCursorVisible = Console.CursorVisible;
+
+        try
+        {
+            Console.CursorVisible = false;
+
+            int w = Math.Max(Console.WindowWidth, 1);
+            int h = Math.Max(Console.WindowHeight, 1);
+
+            string blankLine = new string(' ', w);
+
+            for (int row = 0; row < h; row++)
+            {
+                Console.SetCursorPosition(0, row);
+                Console.Write(blankLine);
+            }
+
+            // position cursor like Console.Clear()
+            Console.SetCursorPosition(0, 0);
+        }
+        finally
+        {
+            Console.ForegroundColor = originalFg;
+            Console.BackgroundColor = originalBg;
+            Console.CursorVisible = originalCursorVisible;
+        }
+    }
+
+    /// <summary>
     /// Рисует окно: рамку, заголовок и текст
     /// </summary>
-    public virtual void Draw()
+    protected virtual void Draw()
     {
         Console.ForegroundColor = ConsoleColor.Gray;
 

@@ -21,20 +21,23 @@ public class MenuWindow : ConsoleWindow
     /// This avoids calling virtual methods from the base constructor.
     /// Now optimized to call CalculateAutoParams only once by forwarding a tuple to a private ctor.
     /// </summary>
-    public MenuWindow(string message, string[] items, string? title = null, WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
+    public MenuWindow(string message, string[] items, string? title = null,
+        WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
         : this(message, items, title, CalculateAutoParams(message, items, windowPosition, windowSize))
     {
     }
 
     // Private helper constructor that accepts the precomputed tuple (width, height, position)
-    private MenuWindow(string message, string[] items, string? title, (int width, int height, Coordinate position) autoParams)
+    private MenuWindow(string message, string[] items, string? title,
+        (int width, int height, Coordinate position) autoParams)
         : base(message, title, autoParams.width, autoParams.height, autoParams.position)
     {
         this.items = items ?? Array.Empty<string>();
     }
 
     // Helper to compute required width/height/position for menu auto mode.
-    private static (int width, int height, Coordinate position) CalculateAutoParams(string message, string[] items, WindowPosition windowPosition, WindowSize windowSize)
+    private static (int width, int height, Coordinate position) CalculateAutoParams(
+        string message, string[] items, WindowPosition windowPosition, WindowSize windowSize)
     {
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
@@ -62,11 +65,17 @@ public class MenuWindow : ConsoleWindow
 
         Coordinate effPosition = windowPosition switch
         {
-            WindowPosition.Center => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Center => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Right => new Coordinate(Math.Max(0, consoleWidth - effWidth), Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Right => new Coordinate(
+                Math.Max(0, consoleWidth - effWidth),
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
-            WindowPosition.Bottom => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), Math.Max(0, consoleHeight - effHeight)),
+            WindowPosition.Bottom => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                Math.Max(0, consoleHeight - effHeight)),
             _ => new Coordinate(0, 0)
         };
 

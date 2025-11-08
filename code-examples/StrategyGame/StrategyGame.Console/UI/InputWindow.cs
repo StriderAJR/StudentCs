@@ -20,7 +20,8 @@ public class InputWindow : ConsoleWindow
     /// <summary>
     /// Auto constructor: size/position by enums
     /// </summary>
-    public InputWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
+    public InputWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center,
+                       WindowSize windowSize = WindowSize.Auto)
         : base(message, title, windowPosition, windowSize)
     {
     }
