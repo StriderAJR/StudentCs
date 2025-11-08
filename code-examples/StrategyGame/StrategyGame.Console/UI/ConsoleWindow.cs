@@ -92,14 +92,9 @@ public abstract class ConsoleWindow<TResult>
     /// </summary>
     public TResult Show()
     {
-        try
-        {
-            return ShowInternal();
-        }
-        finally
-        {
-            ClearScreen();
-        }
+        TResult result = ShowInternal();
+        ClearScreen();
+        return result;
     }
 
     /// <summary>
