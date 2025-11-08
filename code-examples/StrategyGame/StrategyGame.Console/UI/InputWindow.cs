@@ -1,12 +1,29 @@
-﻿namespace StrategyGame.ConsoleGame.UI;
+﻿using System;
+
+namespace StrategyGame.ConsoleGame.UI;
 
 /// <summary>
 /// Окно с полем ввода текста и кнопкой Ok (Enter)
 /// </summary>
-public class InputWindow(string message,string? title = null, int? width = null, int? height = null, Coordinate? position = null)
-    : ConsoleWindow(message, title, width, height, position)
+public class InputWindow : ConsoleWindow
 {
     private string input = string.Empty;
+
+    /// <summary>
+    /// Custom constructor: explicit size and position
+    /// </summary>
+    public InputWindow(string message, string? title, int width, int height, Coordinate position)
+        : base(message, title, width, height, position)
+    {
+    }
+
+    /// <summary>
+    /// Auto constructor: size/position by enums
+    /// </summary>
+    public InputWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
+        : base(message, title, windowPosition, windowSize)
+    {
+    }
 
     /// <summary>
     /// Отображает окно с полем ввода и возвращает введённый текст после нажатия Enter
@@ -48,4 +65,6 @@ public class InputWindow(string message,string? title = null, int? width = null,
 
         return input;
     }
+
+    // Optionally override AdjustAutoSize if special input-field sizing needed in Auto mode.
 }
