@@ -16,7 +16,8 @@ public abstract class ConsoleWindow<TResult>
     /// <summary>
     /// Custom constructor: explicit width/height and explicit position
     /// </summary>
-    public ConsoleWindow(string message, string? title, int width, int height, Coordinate position)
+    public ConsoleWindow(string message, string? title, int width, int height,
+        Coordinate position)
     {
         this.message = message;
         this.title = title;
@@ -33,12 +34,17 @@ public abstract class ConsoleWindow<TResult>
     }
 
     /// <summary>
-    /// Auto constructor: computes size based on message and positions via WindowPosition / WindowSize.
-    /// Note: derived types that need additional sizing (e.g., MenuWindow with buttons) should compute size themselves
-    /// and call the custom constructor to avoid virtual calls from base ctor.
+    /// Auto constructor: computes size based on message and positions via
+    /// WindowPosition / WindowSize.
+    /// Note: derived types that need additional sizing should compute size
+    /// themselves and call the custom ctor to avoid virtual calls from base
+    /// ctor.
     /// </summary>
-    public ConsoleWindow(string message, string? title = null, WindowPosition windowPosition = WindowPosition.Center,
-                         WindowSize windowSize = WindowSize.Auto)
+    public ConsoleWindow(
+        string message,
+        string? title = null,
+        WindowPosition windowPosition = WindowPosition.Center,
+        WindowSize windowSize = WindowSize.Auto)
     {
         this.message = message;
         this.title = title;
@@ -55,10 +61,14 @@ public abstract class ConsoleWindow<TResult>
         }
         else // Auto sizing by message
         {
-            string[] lines = string.IsNullOrEmpty(message) ? Array.Empty<string>() : message.Split('\n');
+            string[] lines = string.IsNullOrEmpty(message)
+                ? Array.Empty<string>()
+                : message.Split('\n');
+
             int maxLineLen = 0;
             foreach (var l in lines)
-                if (l.Length > maxLineLen) maxLineLen = l.Length;
+                if (l.Length > maxLineLen)
+                    maxLineLen = l.Length;
 
             // Add padding for borders/margins
             effWidth = Math.Clamp(maxLineLen + 4, 10, consoleWidth);
@@ -71,11 +81,15 @@ public abstract class ConsoleWindow<TResult>
             WindowPosition.Center => new Coordinate(
                 Math.Max(0, (consoleWidth - effWidth) / 2),
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Left => new Coordinate(
+                0,
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Right => new Coordinate(
                 Math.Max(0, consoleWidth - effWidth),
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
+            WindowPosition.Top => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                0),
             WindowPosition.Bottom => new Coordinate(
                 Math.Max(0, (consoleWidth - effWidth) / 2),
                 Math.Max(0, consoleHeight - effHeight)),
@@ -88,7 +102,8 @@ public abstract class ConsoleWindow<TResult>
     }
 
     /// <summary>
-    /// Template Show: calls derived ShowInternal and guarantees ClearScreen() runs before returning.
+    /// Template Show: calls derived ShowInternal and guarantees ClearScreen()
+    /// runs before returning.
     /// </summary>
     public TResult Show()
     {
@@ -98,13 +113,16 @@ public abstract class ConsoleWindow<TResult>
     }
 
     /// <summary>
-    /// Each derived window implements its interactive logic and returns its typed result.
+    /// Each derived window implements its interactive logic and returns its
+    /// typed result.
     /// </summary>
     protected abstract TResult ShowInternal();
 
     /// <summary>
-    /// Очищает весь видимый экран, заполняя каждую строку пробелами через Console.Write() (не использует Console.Clear()).
-    /// Восстанавливает цвета и видимость курсора, в конце устанавливает курсор в верхний левый угол (0,0).
+    /// Очищает весь видимый экран, заполняя каждую строку пробелами через
+    /// Console.Write() (не использует Console.Clear()).
+    /// Восстанавливает цвета и видимость курсора, в конце устанавливает
+    /// курсор в верхний левый угол (0,0).
     /// </summary>
     private void ClearScreen()
     {
@@ -139,10 +157,13 @@ public abstract class ConsoleWindow<TResult>
     }
 
     /// <summary>
-    /// Hook kept for future use but not called from the base ctor to avoid virtual calls during construction.
-    /// Derived types should calculate auto sizes themselves and call the custom ctor.
+    /// Hook kept for future use but not called from the base ctor to avoid
+    /// virtual calls during construction.
+    /// Derived types should calculate auto sizes themselves and call the
+    /// custom ctor.
     /// </summary>
-    protected virtual void AdjustAutoSize(ref int width, ref int height, int consoleWidth, int consoleHeight)
+    protected virtual void AdjustAutoSize(ref int width, ref int height,
+        int consoleWidth, int consoleHeight)
     {
         // no-op by default
     }
