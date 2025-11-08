@@ -7,9 +7,8 @@ public class Player(string name, PlayerType type, Coordinate position)
     public int Y { get => position.Y; }
     public uint Health { get; private set; } = CalculateHealth();
 
-
-    private readonly string name = name;
-    private readonly PlayerType type = type;
+    public readonly string Name = name;
+    public readonly PlayerType Type = type;
 
     public void Move(Coordinate shift)
     {

@@ -109,21 +109,19 @@ public class InputWindow : ConsoleWindow<string>
                                                                  // message lines
                                                                  // + optional sep
 
-        ConsoleBuffer buffer = Buffer;
-
         while (!finished)
         {
             base.Draw();
 
             // поле ввода
             int inputX = position.X + 2;
-            buffer.SetCursorPosition(inputX, inputY);
-            buffer.Write(new string(' ', width - 4));
-            buffer.SetCursorPosition(inputX, inputY);
-            buffer.Write(input);
+            GameConsole.SetCursorPosition(inputX, inputY);
+            GameConsole.Write(new string(' ', width - 4));
+            GameConsole.SetCursorPosition(inputX, inputY);
+            GameConsole.Write(input);
 
-            buffer.SetCursorPosition(inputX + input.Length, inputY);
-            buffer.Flush();
+            GameConsole.SetCursorPosition(inputX + input.Length, inputY);
+            GameConsole.Flush();
 
             ConsoleKeyInfo key = ReadKey(true);
 

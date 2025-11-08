@@ -7,9 +7,6 @@ static class Program
 {
     private static void Main()
     {
-        // отключаем отображение курсора via shared buffer
-        GameConsole.Buffer.CursorVisible = false;
-
         // ограничить размер буфера, чтобы не появлялись полосы прокрутки
         Console.BufferHeight = Console.WindowHeight;
         Console.BufferWidth = Console.WindowWidth;
@@ -20,7 +17,7 @@ static class Program
         if (menuButtonIndex == 0)
         {
             // OK - start game
-            StrategyGame game = new StrategyGame((uint)(Console.WindowHeight - 1), (uint)Console.WindowWidth);
+            StrategyGame game = new StrategyGame();
             game.Start();
         }
 

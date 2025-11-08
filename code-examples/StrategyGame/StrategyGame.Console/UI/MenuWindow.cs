@@ -207,15 +207,13 @@ public class MenuWindow : ConsoleWindow<int>
         if (buttons == null || buttons.Length == 0)
             return;
 
-        ConsoleBuffer buffer = GameConsole.Buffer;
-
         for (int i = 0; i < buttons.Length; i++)
         {
             var button = buttons[i];
             button.Draw(selected: selectedItemIndex == i);
         }
 
-        buffer.Flush();
+        GameConsole.Flush();
     }
 
     // Build buttons positions and sizes based on layout rules.

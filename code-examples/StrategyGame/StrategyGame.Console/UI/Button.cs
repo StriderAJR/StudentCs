@@ -29,21 +29,20 @@ public sealed class Button
 
     public void Draw(bool selected)
     {
-        ConsoleBuffer buffer = GameConsole.Buffer;
         int buttonStartX = StartX();
-        var originalForeground = buffer.ForegroundColor;
-        var originalBackground = buffer.BackgroundColor;
+        var originalForeground = GameConsole.ForegroundColor;
+        var originalBackground = GameConsole.BackgroundColor;
 
         if (selected)
         {
-            buffer.BackgroundColor = ConsoleColor.Gray;
-            buffer.ForegroundColor = ConsoleColor.Black;
+            GameConsole.BackgroundColor = ConsoleColor.Gray;
+            GameConsole.ForegroundColor = ConsoleColor.Black;
         }
 
-        buffer.SetCursorPosition(buttonStartX, Y);
-        buffer.Write(Rendered);
+        GameConsole.SetCursorPosition(buttonStartX, Y);
+        GameConsole.Write(Rendered);
 
-        buffer.ForegroundColor = originalForeground;
-        buffer.BackgroundColor = originalBackground;
+        GameConsole.ForegroundColor = originalForeground;
+        GameConsole.BackgroundColor = originalBackground;
     }
 }

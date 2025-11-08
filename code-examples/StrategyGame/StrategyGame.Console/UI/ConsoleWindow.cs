@@ -13,8 +13,6 @@ public class ConsoleWindow<TResult>
     protected readonly string? title;
     protected readonly string? message;
 
-    protected ConsoleBuffer Buffer => GameConsole.Buffer;
-
     /// <summary>
     /// Custom constructor: explicit width/height and explicit position
     /// </summary>
@@ -132,16 +130,15 @@ public class ConsoleWindow<TResult>
     /// </summary>
     protected void ClearScreen()
     {
-        ConsoleBuffer buffer = Buffer;
         // clear window area
-        for (int y = position.Y; y < position.Y + height && y < buffer.WindowHeight; y++)
-        for (int x = position.X; x < position.X + width && x < buffer.WindowWidth; x++)
+        for (int y = position.Y; y < position.Y + height && y < GameConsole.WindowHeight; y++)
+        for (int x = position.X; x < position.X + width && x < GameConsole.WindowWidth; x++)
         {
-            buffer.SetCursorPosition(x, y);
-            buffer.Write(' ');
+            GameConsole.SetCursorPosition(x, y);
+            GameConsole.Write(' ');
         }
 
-        buffer.Flush();
+        GameConsole.Flush();
     }
 
     protected ConsoleKeyInfo ReadKey(bool intercept = false) => GameConsole.ReadKey(intercept);
@@ -151,16 +148,15 @@ public class ConsoleWindow<TResult>
     /// </summary>
     public virtual void Draw()
     {
-        ConsoleBuffer buffer = Buffer;
-        var originalForegroundColor = buffer.ForegroundColor;
-        var originalBackgroundColor = buffer.BackgroundColor;
+        var originalForegroundColor = GameConsole.ForegroundColor;
+        var originalBackgroundColor = GameConsole.BackgroundColor;
 
-        buffer.ForegroundColor = ConsoleColor.Gray;
+        GameConsole.ForegroundColor = ConsoleColor.Gray;
 
         // рамка
         for (int i = 0; i < height; i++)
         {
-            buffer.SetCursorPosition(position.X, position.Y + i);
+            GameConsole.SetCursorPosition(position.X, position.Y + i);
             for (int j = 0; j < width; j++)
             {
                 char c =
@@ -170,15 +166,15 @@ public class ConsoleWindow<TResult>
                     i == height - 1 && j == width - 1 ? '┘' :
                     i == 0 || i == height - 1 ? '─' :
                     j == 0 || j == width - 1 ? '│' : ' ';
-                buffer.Write(c);
+                GameConsole.Write(c);
             }
         }
 
         // заголовок
         if (!string.IsNullOrEmpty(title))
         {
-            buffer.SetCursorPosition(position.X + 2, position.Y);
-            buffer.Write($"[{title}]");
+            GameConsole.SetCursorPosition(position.X + 2, position.Y);
+            GameConsole.Write($"[{title}]");
         }
 
         // текст
@@ -187,14 +183,14 @@ public class ConsoleWindow<TResult>
             string[] lines = message.Split('\n');
             for (int i = 0; i < lines.Length && i < height - 2; i++)
             {
-                buffer.SetCursorPosition(position.X + 2, position.Y + 1 + i);
-                buffer.Write(lines[i]);
+                GameConsole.SetCursorPosition(position.X + 2, position.Y + 1 + i);
+                GameConsole.Write(lines[i]);
             }
         }
 
-        buffer.ForegroundColor = originalForegroundColor;
-        buffer.BackgroundColor = originalBackgroundColor;
+        GameConsole.ForegroundColor = originalForegroundColor;
+        GameConsole.BackgroundColor = originalBackgroundColor;
 
-        buffer.Flush();
+        GameConsole.Flush();
     }
 }

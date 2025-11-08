@@ -6,10 +6,8 @@ using System.Linq;
 
 namespace StrategyGame.ConsoleGame;
 
-public class StrategyGame(uint width, uint height)
+public class StrategyGame()
 {
-    public readonly uint Width = width;
-    public readonly uint Height = height;
     private MapCell[,] map;
     private Player player;
 
@@ -53,24 +51,13 @@ public class StrategyGame(uint width, uint height)
         }
 
         // show file names + an option to generate default
-        string[] menuItems = new string[files.Length + 1];
-        menuItems[0] = "Сгенерировать карту по умолчанию";
-        for (int i = 0; i < files.Length; i++)
-            menuItems[i + 1] = Path.GetFileName(files[i]);
+        string[] menuItems = files.Select(x => Path.GetFileName(x)).ToArray();
 
         int selected = new MenuWindow("Выберите карту:", menuItems, buttonPosition: ButtonPosition.CenterVertically).Show();
 
-        if (selected == 0)
-        {
-            // generate default
-            map = GenerateMap(Height, Width);
-        }
-        else
-        {
-            // load selected file (index-1)
-            string chosenPath = files[selected - 1];
-            map = LoadMapFromFile(chosenPath, out playerPos);
-        }
+        // load selected file (index-1)
+        string chosenPath = files[selected];
+        map = LoadMapFromFile(chosenPath, out playerPos);
 
         return true;
     }
@@ -131,35 +118,19 @@ public class StrategyGame(uint width, uint height)
         }
     }
 
-    private MapCell[,] GenerateMap(uint height, uint width)
-    {
-        MapCell[,] map = new MapCell[height, width];
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++)
-                map[i, j] = (i == 0 || i == height-1 || j == 0 || j == width-1)
-                    ? MapCell.Wall
-                    : MapCell.Empty;
-
-        return map;
-    }
-
     private MapCell[,] LoadMapFromFile(string path, out Coordinate? playerPos)
     {
         playerPos = null;
-        // initialize with default generated map (so borders are walls)
-        MapCell[,] result = GenerateMap(Height, Width);
-
         string[] lines = File.ReadAllLines(path);
         int fileH = lines.Length;
         int fileW = lines.Any() ? lines.Max(l => l.Length) : 0;
 
-        int maxH = Math.Min((int)Height, fileH);
-        int maxW = Math.Min((int)Width, fileW);
+        MapCell[,] result = new MapCell[(uint)fileH, (uint)fileW];
 
-        for (int i = 0; i < maxH; i++)
+        for (int i = 0; i < result.GetLength(0); i++)
         {
             string line = lines[i];
-            for (int j = 0; j < maxW; j++)
+            for (int j = 0; j < result.GetLength(1); j++)
             {
                 char c = j < line.Length ? line[j] : ' ';
                 switch (c)
@@ -188,8 +159,6 @@ public class StrategyGame(uint width, uint height)
 
     private void PrintMap()
     {
-        ConsoleBuffer buffer = GameConsole.Buffer;
-
         // draw map into buffer
         StringBuilder sb = new StringBuilder();
         sb.Clear();
@@ -200,22 +169,21 @@ public class StrategyGame(uint width, uint height)
             sb.AppendLine();
         }
 
-        buffer.ForegroundColor = ConsoleColor.Gray;
-        buffer.SetCursorPosition(0, 0);
-        buffer.Write(sb.ToString());
+        GameConsole.ForegroundColor = ConsoleColor.Gray;
+        GameConsole.SetCursorPosition(0, 0);
+        GameConsole.Write(sb.ToString());
 
         // draw player
-        buffer.ForegroundColor = ConsoleColor.Red;
-        buffer.SetCursorPosition((int)player.Y, (int)player.X);
-        buffer.Write('@');
+        GameConsole.ForegroundColor = ConsoleColor.Red;
+        GameConsole.SetCursorPosition(player.Y, player.X);
+        GameConsole.Write('@');
 
-        buffer.Flush();
+        GameConsole.Flush();
     }
 
     private static void ClearScreen()
     {
-        ConsoleBuffer buffer = GameConsole.Buffer;
-        buffer.Clear();
-        buffer.Flush();
+        GameConsole.Clear();
+        GameConsole.Flush();
     }
 }

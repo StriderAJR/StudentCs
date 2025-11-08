@@ -27,7 +27,8 @@ public sealed class ConsoleBuffer
     public ConsoleBuffer()
     {
         Init(Console.WindowWidth, Console.WindowHeight);
-        CursorVisible = Console.CursorVisible;
+        CursorVisible = false;
+        Console.CursorVisible = CursorVisible;
     }
 
     public void Init(int width, int height)
@@ -97,12 +98,12 @@ public sealed class ConsoleBuffer
                 }
 
                 x++;
-                if (x >= WindowWidth)
-                {
-                    x = 0;
-                    y++;
-                    if (y >= WindowHeight) break;
-                }
+                //if (x >= WindowWidth)
+                //{
+                //    x = 0;
+                //    y++;
+                //    if (y >= WindowHeight) break;
+                //}
             }
 
             CursorLeft = x;
@@ -167,52 +168,39 @@ public sealed class ConsoleBuffer
     {
         lock (locker)
         {
-            var originalForegroundColor = Console.ForegroundColor;
-            var originalBackgroundColor = Console.BackgroundColor;
-            var originalCursorVisible = Console.CursorVisible;
-
-            try
+            Console.CursorVisible = CursorVisible;
+            for (int y = 0; y < WindowHeight; y++)
             {
-                Console.CursorVisible = CursorVisible;
-                for (int y = 0; y < WindowHeight; y++)
+                Console.SetCursorPosition(0, y);
+
+                int x = 0;
+                while (x < WindowWidth)
                 {
-                    Console.SetCursorPosition(0, y);
-
-                    int x = 0;
-                    while (x < WindowWidth)
+                    // write runs of same color to reduce color switches
+                    var runForegroundColor = foregroundColors[y, x];
+                    var runBackgroundColor = backgroundColors[y, x];
+                    int runStart = x;
+                    int runLength = 0;
+                    while (x < WindowWidth && foregroundColors[y, x] == runForegroundColor
+                            && backgroundColors[y, x] == runBackgroundColor)
                     {
-                        // write runs of same color to reduce color switches
-                        var runForegroundColor = foregroundColors[y, x];
-                        var runBackgroundColor = backgroundColors[y, x];
-                        int runStart = x;
-                        int runLength = 0;
-                        while (x < WindowWidth && foregroundColors[y, x] == runForegroundColor
-                               && backgroundColors[y, x] == runBackgroundColor)
-                        {
-                            runLength++;
-                            x++;
-                        }
-
-                        Console.ForegroundColor = runForegroundColor;
-                        Console.BackgroundColor = runBackgroundColor;
-
-                        // build string for this run
-                        char[] runBuffer = new char[runLength];
-                        for (int i = 0; i < runLength; i++)
-                            runBuffer[i] = chars[y, runStart + i];
-
-                        Console.Write(runBuffer);
+                        runLength++;
+                        x++;
                     }
-                }
 
-                Console.SetCursorPosition(CursorLeft, CursorTop);
+                    Console.ForegroundColor = runForegroundColor;
+                    Console.BackgroundColor = runBackgroundColor;
+
+                    // build string for this run
+                    char[] runBuffer = new char[runLength];
+                    for (int i = 0; i < runLength; i++)
+                        runBuffer[i] = chars[y, runStart + i];
+
+                    Console.Write(runBuffer);
+                }
             }
-            finally
-            {
-                Console.ForegroundColor = originalForegroundColor;
-                Console.BackgroundColor = originalBackgroundColor;
-                Console.CursorVisible = originalCursorVisible;
-            }
+
+            Console.SetCursorPosition(CursorLeft, CursorTop);
         }
     }
 }
