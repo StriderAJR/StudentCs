@@ -75,6 +75,12 @@ public sealed class ConsoleBuffer
             int y = CursorTop;
             foreach (char c in s)
             {
+                // ignore carriage return (\r) because Environment.NewLine on Windows is "\r\n";
+                // we handle '\n' explicitly and storing '\r' would produce control characters
+                // in the buffer which break the Flush output.
+                if (c == '\r')
+                    continue;
+
                 if (c == '\n')
                 {
                     x = 0;
