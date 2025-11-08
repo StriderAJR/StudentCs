@@ -132,7 +132,8 @@ public class MenuWindow : ConsoleWindow<int>
 
             // compute interior rows
             if (items != null && items.Length > 0)
-                itemsInteriorRows = items.Length <= 2 ? 1 : items.Length * 2 - 1;
+                // When stacked vertically, buttons are rendered with spacing: n==1 -> 1 row, otherwise n*2-1 rows
+                itemsInteriorRows = items.Length == 1 ? 1 : items.Length * 2 - 1;
             else
                 itemsInteriorRows = 0;
         }
@@ -300,13 +301,6 @@ public class MenuWindow : ConsoleWindow<int>
                 if (n == 1)
                     result[0] = new Button(items[0], position.X + width / 2, contentStart,
                         (items[0]?.Length ?? 0) + 4, centered: true);
-                else if (n == 2)
-                {
-                    result[0] = new Button(items[0], position.X + 4, contentStart,
-                        (items[0]?.Length ?? 0) + 4);
-                    result[1] = new Button(items[1], interiorEnd - ((items[1]?.Length ?? 0) + 4) + 1,
-                        contentStart, (items[1]?.Length ?? 0) + 4);
-                }
                 else
                 {
                     for (int i = 0; i < n; i++)

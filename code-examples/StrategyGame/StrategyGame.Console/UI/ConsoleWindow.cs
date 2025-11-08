@@ -5,7 +5,7 @@ namespace StrategyGame.ConsoleGame.UI;
 /// <summary>
 /// Базовое консольное окно с рамкой, опциональным заголовком и текстом
 /// </summary>
-public abstract class ConsoleWindow<TResult>
+public class ConsoleWindow<TResult>
 {
     protected readonly Coordinate position;
     protected readonly int width;
@@ -118,8 +118,14 @@ public abstract class ConsoleWindow<TResult>
     /// <summary>
     /// Each derived window implements its interactive logic and returns its
     /// typed result.
+    /// Default implementation: draw window and wait for any key, return default(TResult).
     /// </summary>
-    protected abstract TResult ShowInternal();
+    protected virtual TResult ShowInternal()
+    {
+        Draw();
+        ReadKey(true);
+        return default!;
+    }
 
     /// <summary>
     /// Clear only area covered by window in buffer (not whole screen)

@@ -18,7 +18,8 @@ public class StrategyGame(uint width, uint height)
     public void Start()
     {
         // Choose and load map (may return player position if map contains '@')
-        Coordinate? initialPlayerPos = ChooseAndLoadMap();
+        if (!ChooseAndLoadMap(out Coordinate? initialPlayerPos))
+            return; // no maps available — user was informed
 
         // Ask user for player name/type and create player (place on first free cell if needed)
         AskPlayerInfoAndCreatePlayer(initialPlayerPos);
@@ -27,8 +28,10 @@ public class StrategyGame(uint width, uint height)
         RunGameLoop();
     }
 
-    private Coordinate? ChooseAndLoadMap()
+    private bool ChooseAndLoadMap(out Coordinate? playerPos)
     {
+        playerPos = null;
+
         string mapsDir = Path.Combine(AppContext.BaseDirectory, "maps");
         string[] files = Array.Empty<string>();
         if (Directory.Exists(mapsDir))
@@ -38,23 +41,24 @@ public class StrategyGame(uint width, uint height)
                 .ToArray();
         }
 
-        string[] menuItems;
+        // If there are no map files — inform user and abort
         if (files.Length == 0)
         {
-            menuItems = new[] { "Generate default map" };
-        }
-        else
-        {
-            // show file names + an option to generate default
-            menuItems = new string[files.Length + 1];
-            menuItems[0] = "Generate default map";
-            for (int i = 0; i < files.Length; i++)
-                menuItems[i + 1] = Path.GetFileName(files[i]);
+            string msg = "В папке 'maps' не найдено ни одной карты.\n" +
+                         "Поместите файлы карт в папку и запустите программу снова.\n" +
+                         "Нажмите любую клавишу для выхода.";
+            // use ConsoleWindow to show informational message; no result needed
+            new ConsoleWindow<int>(msg, "Нет карт").Show();
+            return false;
         }
 
-        int selected = new MenuWindow("Choose map to open:", menuItems).Show();
+        // show file names + an option to generate default
+        string[] menuItems = new string[files.Length + 1];
+        menuItems[0] = "Сгенерировать карту по умолчанию";
+        for (int i = 0; i < files.Length; i++)
+            menuItems[i + 1] = Path.GetFileName(files[i]);
 
-        Coordinate? playerPos = null;
+        int selected = new MenuWindow("Выберите карту:", menuItems, buttonPosition: ButtonPosition.CenterVertically).Show();
 
         if (selected == 0)
         {
@@ -68,7 +72,7 @@ public class StrategyGame(uint width, uint height)
             map = LoadMapFromFile(chosenPath, out playerPos);
         }
 
-        return playerPos;
+        return true;
     }
 
     private void AskPlayerInfoAndCreatePlayer(Coordinate? initialPos)
