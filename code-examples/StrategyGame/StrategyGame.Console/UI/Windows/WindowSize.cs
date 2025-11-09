@@ -1,4 +1,4 @@
-﻿namespace StrategyGame.ConsoleGame.UI;
+﻿namespace StrategyGame.ConsoleGame.UI.Windows;
 
 /// <summary>
 /// Supported window sizing modes

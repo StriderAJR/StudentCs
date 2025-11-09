@@ -1,0 +1,21 @@
+﻿{
+  "Tree": "T",
+  "Stone": "^",
+  "Gold": "$",
+  "Person": "@",
+  "Castle": "#",
+  "Monster": "M",
+  "Wall": "▓",
+  "Empty": " ",
+
+  "TreeMonospace": "T",
+  "StoneMonospace": "^",
+  "GoldMonospace": "$",
+  "PersonMonospace": "@",
+  "CastleMonospace": "#",
+  "MonsterMonospace": "M",
+  "WallMonospace": "#",
+  "EmptyMonospace": " ",
+
+  "UseMonospace": true
+}

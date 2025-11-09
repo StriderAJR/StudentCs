@@ -1,7 +1,7 @@
 ﻿using StrategyGame.ConsoleGame.Game;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
 
-namespace StrategyGame.ConsoleGame.UI;
+namespace StrategyGame.ConsoleGame.UI.Windows;
 
 public class MenuWindow : ConsoleWindow<int>
 {
@@ -25,7 +25,7 @@ public class MenuWindow : ConsoleWindow<int>
     {
         this.items = items ?? Array.Empty<string>();
         this.buttonPosition = buttonPosition;
-        this.buttons = CalculateButtons(this.items, this.buttonPosition, this.position,
+        buttons = CalculateButtons(this.items, this.buttonPosition, this.position,
             this.width, this.height, this.message);
     }
 
@@ -62,8 +62,8 @@ public class MenuWindow : ConsoleWindow<int>
     {
         this.items = items ?? Array.Empty<string>();
         this.buttonPosition = buttonPosition;
-        this.buttons = CalculateButtons(this.items, this.buttonPosition, this.position,
-            this.width, this.height, this.message);
+        buttons = CalculateButtons(this.items, this.buttonPosition, position,
+            width, height, this.message);
     }
 
     // Helper to compute required width/height/position for menu auto mode.
@@ -280,7 +280,7 @@ public class MenuWindow : ConsoleWindow<int>
                 double avail = availableSpan;
                 for (int i = 0; i < n; i++)
                 {
-                    double center = interiorStart + ((i + 1) * avail) / (n + 1);
+                    double center = interiorStart + (i + 1) * avail / (n + 1);
                     int startX = (int)Math.Round(center - buttonLengths[i] / 2.0);
 
                     // clamp

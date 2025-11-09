@@ -1,17 +1,24 @@
-﻿using StrategyGame.ConsoleGame.Game;
-using StrategyGame.ConsoleGame.UI;
+﻿using StrategyGame.ConsoleGame.UI;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
+using StrategyGame.ConsoleGame.UI.Panels;
+using StrategyGame.ConsoleGame.UI.Windows;
 
-namespace StrategyGame.ConsoleGame;
+namespace StrategyGame.ConsoleGame.Game;
 
-public class StrategyGame()
+public class StrategyGame
 {
     private Map map;
     private Player player;
 
+    // Панели UI
+    private SidePanel sidePanel;
+    private BottomPanel bottomPanel;
+
+    // Настройки интерфейса
     private readonly int sidePanelWidth = 30;
     private readonly int bottomPanelHeight = 5;
 
+    // Состояние игры
     private int day = 1;
     private int week = 1;
     private int wood = 0;
@@ -26,6 +33,7 @@ public class StrategyGame()
             return;
 
         AskPlayerInfoAndCreatePlayer(initialPlayerPos);
+
         ClearScreen();
         RunGameLoop();
     }
@@ -33,10 +41,15 @@ public class StrategyGame()
     private bool ChooseAndLoadMap(out Coordinate? playerPos)
     {
         playerPos = null;
+
         string mapsDir = Path.Combine(AppContext.BaseDirectory, "maps");
-        string[] files = Directory.Exists(mapsDir)
-            ? Directory.GetFiles(mapsDir).Where(f => !string.IsNullOrEmpty(f)).ToArray()
-            : Array.Empty<string>();
+        string[] files = Array.Empty<string>();
+        if (Directory.Exists(mapsDir))
+        {
+            files = Directory.GetFiles(mapsDir)
+                .Where(f => !string.IsNullOrEmpty(f))
+                .ToArray();
+        }
 
         if (files.Length == 0)
         {
@@ -47,11 +60,14 @@ public class StrategyGame()
             return false;
         }
 
-        string[] menuItems = files.Select(Path.GetFileName).ToArray();
-        int selected = new MenuWindow("Выберите карту:", menuItems, buttonPosition: ButtonPosition.CenterVertically).Show();
+        string[] menuItems = files.Select(x => Path.GetFileName(x)).ToArray();
 
+        int selected = new MenuWindow("Выберите карту:", menuItems,
+            buttonPosition: ButtonPosition.CenterVertically).Show();
+
+        string chosenPath = files[selected];
         map = new Map();
-        map.LoadFromFile(files[selected], out playerPos);
+        map.LoadFromFile(chosenPath, out playerPos);
 
         return true;
     }
@@ -59,8 +75,11 @@ public class StrategyGame()
     private void AskPlayerInfoAndCreatePlayer(Coordinate? initialPos)
     {
         string playerName = new InputWindow("Введите имя игрока").Show();
-        PlayerType playerType = (PlayerType)new MenuWindow("Выберите тип игрока",
-            Enum.GetNames(typeof(PlayerType))).Show();
+
+        PlayerType playerType = (PlayerType)new MenuWindow(
+            "Выберите тип игрока",
+            Enum.GetNames(typeof(PlayerType))
+        ).Show();
 
         if (initialPos == null)
         {
@@ -69,17 +88,17 @@ public class StrategyGame()
         }
 
         player = new Player(playerName, playerType, initialPos.Value, PlayerColor.Red);
-        map.RevealAround(player.position);
+        map.RevealAround(initialPos.Value, 3);
     }
 
     private void RunGameLoop()
     {
         while (true)
         {
-            PrintMap();
+            Draw();
 
             ConsoleKey key = GameConsole.ReadKey().Key;
-            Coordinate shift = new(0, 0);
+            Coordinate shift = new Coordinate(0, 0);
             bool hasMovement = false;
 
             switch (key)
@@ -101,7 +120,8 @@ public class StrategyGame()
                 case ConsoleKey.E:
                     EndDay(); break;
                 case ConsoleKey.M:
-                    int sel = new MenuWindow("Меню", new[] { "Продолжить", "Выйти" }, "Меню", buttonPosition: ButtonPosition.Horizontal).Show();
+                    int sel = new MenuWindow("Меню", new[] { "Продолжить", "Выйти" },
+                        "Меню", buttonPosition: ButtonPosition.Horizontal).Show();
                     if (sel == 1)
                         return;
                     break;
@@ -110,17 +130,10 @@ public class StrategyGame()
             if (hasMovement && map.CanMove(player.position, shift))
             {
                 player.Move(shift);
-                map.RevealAround(player.position);
-                TryCaptureBuilding();
+                map.RevealAround(player.position, 3);
+                map.TryCaptureBuilding(player.position, player);
             }
         }
-    }
-
-    private void TryCaptureBuilding()
-    {
-        var building = map.GetBuildingAt(player.position);
-        if (building != null && !building.IsCaptured)
-            building.Capture(player);
     }
 
     private void EndDay()
@@ -133,9 +146,9 @@ public class StrategyGame()
             CollectWeeklyIncome();
         }
 
-        wood += rng.Next(0, 2);
+        wood += rng.Next(0, 3);
         stone += rng.Next(0, 2);
-        gold += rng.Next(0, 1);
+        gold += rng.Next(0, 2);
     }
 
     private void CollectWeeklyIncome()
@@ -146,21 +159,38 @@ public class StrategyGame()
             {
                 switch (b.Type)
                 {
-                    case MapCell.Wood:
-                        wood += b.IncomePerWeek;
-                        break;
-                    case MapCell.Stone:
-                        stone += b.IncomePerWeek;
-                        break;
-                    case MapCell.Gold:
-                        gold += b.IncomePerWeek;
-                        break;
+                    case MapCell.Wood: wood += b.IncomePerWeek; break;
+                    case MapCell.Stone: stone += b.IncomePerWeek; break;
+                    case MapCell.Gold: gold += b.IncomePerWeek; break;
                 }
             }
         }
     }
 
-    private void PrintMap()
+    private (int wood, int stone, int gold) CalculateWeeklyIncome()
+    {
+        int woodInc = 0, stoneInc = 0, goldInc = 0;
+
+        foreach (var b in map.Buildings)
+        {
+            if (b.Owner == player)
+            {
+                switch (b.Type)
+                {
+                    case MapCell.Wood:
+                        woodInc += b.IncomePerWeek; break;
+                    case MapCell.Stone:
+                        stoneInc += b.IncomePerWeek; break;
+                    case MapCell.Gold:
+                        goldInc += b.IncomePerWeek; break;
+                }
+            }
+        }
+
+        return (woodInc, stoneInc, goldInc);
+    }
+
+    private void Draw()
     {
         int totalW = GameConsole.WindowWidth;
         int totalH = GameConsole.WindowHeight;
@@ -171,103 +201,28 @@ public class StrategyGame()
         int mapW = Math.Max(3, totalW - sideW);
         int mapH = Math.Max(3, totalH - bottomH);
 
-        DrawFrame(0, 0, mapW, mapH, "Карта");
-        DrawFrame(mapW, 0, sideW, totalH - bottomH, "Панель");
-        DrawFrame(0, mapH, totalW, bottomH, "Инфо");
+        map.DrawFrame(0, 0, mapW, mapH, "Карта");
+        map.DrawVisible(0, 0, mapW, mapH, player);
 
-        map.Draw(0, 0, mapW, mapH, player.position);
-        DrawSidePanel(mapW, 0, sideW, totalH - bottomH);
-        DrawBottomPanel(0, mapH, totalW, bottomH);
+        sidePanel = new SidePanel(mapW, 0, sideW, totalH - bottomH);
+        bottomPanel = new BottomPanel(0, mapH, totalW, bottomH, GetPanelData);
+
+        sidePanel.Draw("Панель");
+        bottomPanel.Draw("Инфо");
 
         GameConsole.Flush();
     }
 
-    private void DrawFrame(int x, int y, int width, int height, string? title = null)
+    private PanelData GetPanelData()
     {
-        if (width <= 0 || height <= 0)
-            return;
-
-        var prevColor = GameConsole.ForegroundColor;
-        GameConsole.ForegroundColor = ConsoleColor.Gray;
-
-        for (int row = 0; row < height; row++)
-        {
-            GameConsole.SetCursorPosition(x, y + row);
-            if (row == 0)
-            {
-                GameConsole.Write('┌');
-                GameConsole.Write(new string('─', Math.Max(0, width - 2)));
-                if (width > 1) GameConsole.Write('┐');
-            }
-            else if (row == height - 1)
-            {
-                GameConsole.Write('└');
-                GameConsole.Write(new string('─', Math.Max(0, width - 2)));
-                if (width > 1) GameConsole.Write('┘');
-            }
-            else
-            {
-                GameConsole.Write('│');
-                GameConsole.Write(new string(' ', Math.Max(0, width - 2)));
-                GameConsole.Write('│');
-            }
-        }
-
-        if (!string.IsNullOrEmpty(title) && width >= 6)
-        {
-            GameConsole.SetCursorPosition(x + 2, y);
-            GameConsole.Write($"[{title}]");
-        }
-
-        GameConsole.ForegroundColor = prevColor;
-    }
-
-    private void DrawSidePanel(int x, int y, int width, int height)
-    {
-        int innerX = x + 1;
-        int innerY = y + 1;
-        int innerW = Math.Max(0, width - 2);
-        int innerH = Math.Max(0, height - 2);
-
-        string[] buttons = new[] { "[I] Информация", "[E] Завершить день", "[M] Меню" };
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            string text = buttons[i];
-            if (text.Length > innerW) text = text[..innerW];
-            int posX = innerX + Math.Max(0, (innerW - text.Length) / 2);
-            int posY = innerY + 1 + i * 2;
-            if (posY < innerY + innerH)
-            {
-                GameConsole.SetCursorPosition(posX, posY);
-                GameConsole.ForegroundColor = ConsoleColor.Yellow;
-                GameConsole.Write(text);
-            }
-        }
-    }
-
-    private void DrawBottomPanel(int x, int y, int width, int height)
-    {
-        int innerX = x + 1;
-        int innerY = y + 1;
-        int innerW = Math.Max(0, width - 2);
-
-        string line1 = $"День: {day}   Неделя: {week}";
-        string line2 = $"Дерево: {wood}  Камень: {stone}  Золото: {gold}";
-
-        GameConsole.SetCursorPosition(innerX, innerY);
-        GameConsole.ForegroundColor = ConsoleColor.Cyan;
-        GameConsole.Write(line1.Length > innerW ? line1[..innerW] : line1);
-
-        GameConsole.SetCursorPosition(innerX, innerY + 1);
-        GameConsole.ForegroundColor = ConsoleColor.Green;
-        GameConsole.Write(line2.Length > innerW ? line2[..innerW] : line2);
-
-        GameConsole.ForegroundColor = ConsoleColor.Gray;
+        var (wInc, sInc, gInc) = CalculateWeeklyIncome();
+        return new PanelData(day, week, wood, stone, gold, wInc, sInc, gInc);
     }
 
     private void ShowPlayerInfo()
     {
-        string msg = $"Имя: {player.Name}\nТип: {player.Type}\nHP: {player.Health}\nПозиция: ({player.X},{player.Y})\n" +
+        string msg = $"Имя: {player.Name}\nТип: {player.Type}\nHP: {player.Health}\n" +
+                     $"Позиция: ({player.X},{player.Y})\n" +
                      $"Ресурсы - Д:{wood} К:{stone} З:{gold}\n\nНажмите любую клавишу...";
         new ConsoleWindow<int>(msg, "Информация об игроке").Show();
     }

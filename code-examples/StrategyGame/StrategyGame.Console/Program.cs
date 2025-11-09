@@ -1,7 +1,7 @@
 ﻿using StrategyGame.ConsoleGame.UI;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
+using StrategyGame.ConsoleGame.UI.Windows;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace StrategyGame.ConsoleGame;
 
@@ -17,7 +17,7 @@ static class Program
         if (menuButtonIndex == 0)
         {
             // OK - старт игры
-            StrategyGame game = new StrategyGame();
+            Game.StrategyGame game = new Game.StrategyGame();
             game.Start();
         }
 
@@ -26,6 +26,22 @@ static class Program
 
     private static void SetupConsoleWindow()
     {
+        // explicitly request UTF-8 output
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        // On Windows additionally set the console output code page to UTF-8 (65001)
+        if (OperatingSystem.IsWindows())
+        {
+            try
+            {
+                NativeWin.SetConsoleOutputCP(65001);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
         // Попытаться развернуть окно консоли на весь экран (Windows)
         if (OperatingSystem.IsWindows())
         {
@@ -78,6 +94,9 @@ static class Program
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool SetConsoleOutputCP(uint wCodePageID);
 
         public const int SW_MAXIMIZE = 3;
 

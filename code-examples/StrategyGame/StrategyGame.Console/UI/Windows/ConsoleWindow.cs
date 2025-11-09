@@ -1,7 +1,7 @@
 ﻿using StrategyGame.ConsoleGame.Game;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
 
-namespace StrategyGame.ConsoleGame.UI;
+namespace StrategyGame.ConsoleGame.UI.Windows;
 
 /// <summary>
 /// Базовое консольное окно с рамкой, опциональным заголовком и текстом
@@ -97,9 +97,9 @@ public class ConsoleWindow<TResult>
             _ => new Coordinate(0, 0)
         };
 
-        this.position = effPosition;
-        this.width = effWidth;
-        this.height = effHeight;
+        position = effPosition;
+        width = effWidth;
+        height = effHeight;
     }
 
     /// <summary>

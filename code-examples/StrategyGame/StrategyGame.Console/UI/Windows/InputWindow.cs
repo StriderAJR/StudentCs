@@ -1,7 +1,7 @@
 ﻿using StrategyGame.ConsoleGame.Game;
 using StrategyGame.ConsoleGame.UI.CustomConsole;
 
-namespace StrategyGame.ConsoleGame.UI;
+namespace StrategyGame.ConsoleGame.UI.Windows;
 
 /// <summary>
 /// Окно с полем ввода текста и кнопкой Ok (Enter)
