@@ -1,4 +1,4 @@
-﻿namespace StrategyGame.ConsoleGame;
+﻿namespace StrategyGame.ConsoleGame.Game;
 public readonly struct Coordinate
 {
     public Coordinate(int x, int y)

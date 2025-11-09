@@ -1,4 +1,5 @@
-﻿using StrategyGame.ConsoleGame.UI.CustomConsole;
+﻿using StrategyGame.ConsoleGame.Game;
+using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame.UI;
 
