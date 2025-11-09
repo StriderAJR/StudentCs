@@ -12,6 +12,9 @@ public class StrategyGame()
     private MapCell[,] map;
     private Player player;
 
+    // Туманный массив: true — ячейка открыта (explored)
+    private bool[,] explored;
+
     // TODO туман войны
 
     // UI layout settings
@@ -73,6 +76,11 @@ public class StrategyGame()
         string chosenPath = files[selected];
         map = LoadMapFromFile(chosenPath, out playerPos);
 
+        // Инициализировать массив explored того же размера, что и карта
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+        explored = new bool[rows, cols];
+
         return true;
     }
 
@@ -91,6 +99,9 @@ public class StrategyGame()
         }
 
         player = new Player(playerName, playerType, initialPos.Value);
+
+        // Открыть вокруг игрока область радиусом 3
+        RevealAround(player.position);
     }
 
     private Coordinate? FindFirstEmptyCell()
@@ -152,6 +163,8 @@ public class StrategyGame()
                 if (CanMove(player.position, shift))
                 {
                     player.Move(shift);
+                    // после перемещения открываем вокруг игрока новые ячейки
+                    RevealAround(player.position);
                 }
             }
         }
@@ -323,7 +336,13 @@ public class StrategyGame()
                 int mc = left + col;
                 char ch = ' ';
                 if (mr >= 0 && mr < mapRows && mc >= 0 && mc < mapCols)
-                    ch = map[mr, mc].ToChar();
+                {
+                    // показываем символ только если ячейка открыта (explored)
+                    if (explored != null && explored[mr, mc])
+                        ch = map[mr, mc].ToChar();
+                    else
+                        ch = ' ';
+                }
                 sb.Append(ch);
             }
 
@@ -332,7 +351,7 @@ public class StrategyGame()
             GameConsole.Write(sb.ToString());
         }
 
-        // Отрисовать игрока
+        // Отрисовать игрока (игрок всегда видим)
         int screenRow = player.X - top;
         int screenCol = player.Y - left;
         if (screenRow >= 0 && screenRow < innerH && screenCol >= 0 && screenCol < innerW)
@@ -374,11 +393,6 @@ public class StrategyGame()
                 GameConsole.Write(text);
             }
         }
-
-        // Previously there were hotkey hints at the bottom; remove them because hotkeys are shown in buttons
-        // GameConsole.SetCursorPosition(innerX, innerY + innerH - 1);
-        // GameConsole.ForegroundColor = ConsoleColor.Gray;
-        // GameConsole.Write(hints);
     }
 
     private void DrawBottomPanel(int x, int y, int width, int height)
@@ -406,6 +420,27 @@ public class StrategyGame()
         GameConsole.Write(line2);
 
         GameConsole.ForegroundColor = ConsoleColor.Gray;
+    }
+
+    private void RevealAround(Coordinate pos)
+    {
+        if (explored == null || map == null)
+            return;
+
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+        int radius = 3;
+
+        for (int dr = -radius; dr <= radius; dr++)
+        {
+            for (int dc = -radius; dc <= radius; dc++)
+            {
+                int r = pos.X + dr;
+                int c = pos.Y + dc;
+                if (r >= 0 && r < rows && c >= 0 && c < cols)
+                    explored[r, c] = true;
+            }
+        }
     }
 
     private void EndDay()
