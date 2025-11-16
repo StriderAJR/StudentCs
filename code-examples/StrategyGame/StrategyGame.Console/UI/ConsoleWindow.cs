@@ -143,7 +143,7 @@ public abstract class ConsoleWindow<TResult>
     /// <summary>
     /// Рисует окно: рамка, заголовок и текст
     /// </summary>
-    public virtual void Draw()
+    protected virtual void Draw()
     {
         ConsoleBuffer buffer = Buffer;
         var originalForegroundColor = buffer.ForegroundColor;
