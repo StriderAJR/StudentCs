@@ -1,4 +1,5 @@
 ﻿using StrategyGame.ConsoleGame.UI;
+using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame;
 
@@ -6,14 +7,14 @@ static class Program
 {
     private static void Main()
     {
-        // отключаем отображение курсора
-        Console.CursorVisible = false;
+        // отключаем отображение курсора via shared buffer
+        GameConsole.Buffer.CursorVisible = false;
 
         // ограничить размер буфера, чтобы не появлялись полосы прокрутки
         Console.BufferHeight = Console.WindowHeight;
         Console.BufferWidth = Console.WindowWidth;
 
-        MenuWindow mainMenu = new MenuWindow("Do you want to start game?", ["Ok", "Cancel"], "Menu");
+        MenuWindow mainMenu = new MenuWindow("Do you want to start game?", new[] { "Ok", "Cancel" }, "Menu");
         int menuButtonIndex = mainMenu.Show();
         if (menuButtonIndex == 0)
         {

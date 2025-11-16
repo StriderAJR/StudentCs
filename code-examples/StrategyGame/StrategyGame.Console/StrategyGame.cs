@@ -1,4 +1,5 @@
 ﻿using StrategyGame.ConsoleGame.UI;
+using StrategyGame.ConsoleGame.UI.CustomConsole;
 using System.Text;
 
 namespace StrategyGame.ConsoleGame;
@@ -15,15 +16,12 @@ public class StrategyGame(uint width, uint height)
 
     public void Start()
     {
-        // InputWindow nameInput = new InputWindow("Введите имя игрока");
-        // string playerName = nameInput.Show();
 
-        // Если объект одноразовый, то можно сделать вот так хитро:
         string playerName = new InputWindow("Введите имя игрока").Show();
 
-        // за счет того, что у нас индексы пунктов меню совпадают с индексами в enum, то можно тоже сделать хитро:
-        PlayerType playerType = (PlayerType) new MenuWindow("Выберите тип игрока", Enum.GetNames(typeof(PlayerType))).Show();
-        
+        PlayerType playerType = (PlayerType) new MenuWindow("Выберите тип игрока",
+            Enum.GetNames(typeof(PlayerType))).Show();
+
         map = GenerateMap(Height, Width);
         player = new Player(playerName, playerType, new Coordinate(1, 1));
 
@@ -32,7 +30,7 @@ public class StrategyGame(uint width, uint height)
         {
             PrintMap();
 
-            ConsoleKey input = Console.ReadKey().Key;
+            ConsoleKey input = GameConsole.ReadKey().Key;
             switch (input)
             {
                 case ConsoleKey.W:
@@ -50,22 +48,24 @@ public class StrategyGame(uint width, uint height)
             }
         }
     }
+
     private MapCell[,] GenerateMap(uint height, uint width)
     {
         MapCell[,] map = new MapCell[height, width];
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++)
-                map[i, j] = (i == 0 || i == height-1 || j == 0 || j == width-1) 
-                    ? MapCell.Wall 
+                map[i, j] = (i == 0 || i == height-1 || j == 0 || j == width-1)
+                    ? MapCell.Wall
                     : MapCell.Empty;
 
         return map;
     }
 
-    
     private void PrintMap()
     {
-        // draw map
+        ConsoleBuffer buffer = GameConsole.Buffer;
+
+        // draw map into buffer
         StringBuilder sb = new StringBuilder();
         sb.Clear();
         for (int i = 0; i < map.GetLength(0); i++)
@@ -74,23 +74,23 @@ public class StrategyGame(uint width, uint height)
                 sb.Append(map[i, j].ToChar());
             sb.AppendLine();
         }
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.SetCursorPosition(0, 0);
-        Console.Write(sb.ToString());
+
+        buffer.ForegroundColor = ConsoleColor.Gray;
+        buffer.SetCursorPosition(0, 0);
+        buffer.Write(sb.ToString());
 
         // draw player
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.SetCursorPosition(player.Y, player.X);
-        Console.Write('@');
+        buffer.ForegroundColor = ConsoleColor.Red;
+        buffer.SetCursorPosition((int)player.Y, (int)player.X);
+        buffer.Write('@');
+
+        buffer.Flush();
     }
 
     private static void ClearScreen()
     {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i <= Console.WindowHeight; i++) {
-            sb.AppendLine(new string(' ', Console.WindowWidth));
-        }
-        Console.SetCursorPosition(0,0);
-        Console.Write(sb.ToString());
+        ConsoleBuffer buffer = GameConsole.Buffer;
+        buffer.Clear();
+        buffer.Flush();
     }
 }
