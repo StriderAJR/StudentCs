@@ -1,22 +1,91 @@
-﻿namespace StrategyGame.ConsoleGame.UI;
+﻿using System;
 
-public class MenuWindow(string message, string[] items, string? title = null, int? width = null, int? height = null, Coordinate? position = null)
-    : ConsoleWindow(message, title, width, height, position)
+namespace StrategyGame.ConsoleGame.UI;
+
+public class MenuWindow : ConsoleWindow
 {
-    // В inline-конструкторе можно не создавать отдельные поля для всех параметров,
-    // если не нужны дополнительные модификаторы или логика.
-    // Например, параметр `items` можно использовать напрямую, без отдельного private поля.
-    //
-    // Если же нужно сделать поле readonly, или добавить инициализацию/валидацию, 
-    // тогда создаём явное поле с нужным модификатором и присваиваем значение из параметра.
-
+    private readonly string[] items;
     private int selectedItemIndex = 0;
+
+    /// <summary>
+    /// Custom constructor: explicit width/height and position
+    /// </summary>
+    public MenuWindow(string message, string[] items, string? title, int width, int height, Coordinate position)
+        : base(message, title, width, height, position)
+    {
+        this.items = items ?? Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Auto constructor: computes size based on message + menu items and then calls base custom ctor.
+    /// This avoids calling virtual methods from the base constructor.
+    /// Now optimized to call CalculateAutoParams only once by forwarding a tuple to a private ctor.
+    /// </summary>
+    public MenuWindow(string message, string[] items, string? title = null,
+        WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
+        : this(message, items, title, CalculateAutoParams(message, items, windowPosition, windowSize))
+    {
+    }
+
+    // Private helper constructor that accepts the precomputed tuple (width, height, position)
+    private MenuWindow(string message, string[] items, string? title,
+        (int width, int height, Coordinate position) autoParams)
+        : base(message, title, autoParams.width, autoParams.height, autoParams.position)
+    {
+        this.items = items ?? Array.Empty<string>();
+    }
+
+    // Helper to compute required width/height/position for menu auto mode.
+    private static (int width, int height, Coordinate position) CalculateAutoParams(
+        string message, string[] items, WindowPosition windowPosition, WindowSize windowSize)
+    {
+        int consoleWidth = Console.WindowWidth;
+        int consoleHeight = Console.WindowHeight;
+
+        if (windowSize == WindowSize.FullScreen)
+            return (consoleWidth, consoleHeight, new Coordinate(0, 0));
+
+        string[] messageLines = string.IsNullOrEmpty(message) ? Array.Empty<string>() : message.Split('\n');
+        int maxLineLen = 0;
+        foreach (var l in messageLines)
+            if (l.Length > maxLineLen) maxLineLen = l.Length;
+
+        int maxItemLen = 0;
+        if (items != null)
+            foreach (var it in items)
+                if (it != null && it.Length > maxItemLen) maxItemLen = it.Length;
+
+        int messageWidth = maxLineLen + 4;     // padding for borders
+        int itemsWidth = maxItemLen + 6;       // "[ {item} ]" + small margin
+        int effWidth = Math.Clamp(Math.Max(messageWidth, itemsWidth), 10, consoleWidth);
+
+        int messageHeight = messageLines.Length + 2;
+        int itemsHeight = items == null || items.Length == 0 ? 0 : (items.Length == 1 ? 3 : items.Length * 2 + 1);
+        int effHeight = Math.Clamp(Math.Max(messageHeight, itemsHeight), 3, consoleHeight);
+
+        Coordinate effPosition = windowPosition switch
+        {
+            WindowPosition.Center => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Right => new Coordinate(
+                Math.Max(0, consoleWidth - effWidth),
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
+            WindowPosition.Bottom => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                Math.Max(0, consoleHeight - effHeight)),
+            _ => new Coordinate(0, 0)
+        };
+
+        return (effWidth, effHeight, effPosition);
+    }
 
     /// <summary>
     /// Отобразить меню
     /// </summary>
     /// <returns>Возвращает индекс выбранной кнопки</returns>
-    /// <remarks>В будущем переделать так, чтобы у кнопки было событие срабатывания</remarks>
     public int Show()
     {
         bool shouldContinue = true;
@@ -56,10 +125,6 @@ public class MenuWindow(string message, string[] items, string? title = null, in
             return;
 
         int baseY = position.Y + height - 3;
-
-        // if buttons count = 1 - draw in the window center
-        // if buttons count = 2 - draw on the left and right
-        // if buttons count > 2 - draw buttons vertically in the window center 
 
         if (items.Length == 1)
             DrawButton(items[0], 0, position.X + width / 2, baseY, centered: true);
