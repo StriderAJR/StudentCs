@@ -1,4 +1,4 @@
-﻿using System;
+﻿using StrategyGame.ConsoleGame.UI.CustomConsole;
 
 namespace StrategyGame.ConsoleGame.UI;
 
@@ -43,8 +43,8 @@ public class InputWindow : ConsoleWindow<string>
     private static (int width, int height, Coordinate position) CalculateAutoParams(
         string message, WindowPosition windowPosition, WindowSize windowSize)
     {
-        int consoleWidth = Console.WindowWidth;
-        int consoleHeight = Console.WindowHeight;
+        int consoleWidth = GameConsole.WindowWidth;
+        int consoleHeight = GameConsole.WindowHeight;
 
         if (windowSize == WindowSize.FullScreen)
             return (consoleWidth, consoleHeight, new Coordinate(0, 0));
@@ -109,20 +109,23 @@ public class InputWindow : ConsoleWindow<string>
                                                                  // message lines
                                                                  // + optional sep
 
+        ConsoleBuffer buffer = Buffer;
+
         while (!finished)
         {
             base.Draw();
 
             // поле ввода
             int inputX = position.X + 2;
-            Console.SetCursorPosition(inputX, inputY);
-            Console.Write(new string(' ', width - 4));
-            Console.SetCursorPosition(inputX, inputY);
-            Console.Write(input);
+            buffer.SetCursorPosition(inputX, inputY);
+            buffer.Write(new string(' ', width - 4));
+            buffer.SetCursorPosition(inputX, inputY);
+            buffer.Write(input);
 
-            Console.SetCursorPosition(inputX + input.Length, inputY);
+            buffer.SetCursorPosition(inputX + input.Length, inputY);
+            buffer.Flush();
 
-            ConsoleKeyInfo key = Console.ReadKey(true);
+            ConsoleKeyInfo key = ReadKey(true);
 
             if (key.Key == ConsoleKey.Enter)
             {
