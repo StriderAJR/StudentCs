@@ -1,4 +1,4 @@
-﻿using StrategyGame.ConsoleGame.Windows;
+﻿using StrategyGame.ConsoleGame.UI;
 using System.Text;
 
 namespace StrategyGame.ConsoleGame;
