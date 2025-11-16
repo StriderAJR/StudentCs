@@ -141,4 +141,6 @@ public class InputWindow : ConsoleWindow<string>
 
         return input;
     }
+
+    // Optionally override AdjustAutoSize if special input-field sizing needed in Auto mode.
 }

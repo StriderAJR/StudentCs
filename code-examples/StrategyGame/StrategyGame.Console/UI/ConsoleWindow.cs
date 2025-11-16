@@ -171,7 +171,7 @@ public abstract class ConsoleWindow<TResult>
     /// <summary>
     /// Рисует окно: рамку, заголовок и текст
     /// </summary>
-    public virtual void Draw()
+    protected virtual void Draw()
     {
         Console.ForegroundColor = ConsoleColor.Gray;
 
