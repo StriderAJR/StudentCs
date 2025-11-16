@@ -2,42 +2,76 @@
 
 namespace StrategyGame.ConsoleGame.UI;
 
-public class MenuWindow : ConsoleWindow
+public class MenuWindow : ConsoleWindow<int>
 {
     private readonly string[] items;
+    private readonly ButtonPosition buttonPosition;
+    private readonly Button[] buttons;
     private int selectedItemIndex = 0;
 
     /// <summary>
     /// Custom constructor: explicit width/height and position
     /// </summary>
-    public MenuWindow(string message, string[] items, string? title, int width, int height, Coordinate position)
+    public MenuWindow(
+        string message,
+        string[] items,
+        string? title,
+        int width,
+        int height,
+        Coordinate position,
+        ButtonPosition buttonPosition = ButtonPosition.CenterVertically)
         : base(message, title, width, height, position)
     {
         this.items = items ?? Array.Empty<string>();
+        this.buttonPosition = buttonPosition;
+        this.buttons = CalculateButtons(this.items, this.buttonPosition, this.position,
+            this.width, this.height, this.message);
     }
 
     /// <summary>
-    /// Auto constructor: computes size based on message + menu items and then calls base custom ctor.
-    /// This avoids calling virtual methods from the base constructor.
-    /// Now optimized to call CalculateAutoParams only once by forwarding a tuple to a private ctor.
+    /// Auto constructor: computes size based on message + menu items and then calls
+    /// base custom ctor. This avoids calling virtual methods from the base ctor.
     /// </summary>
-    public MenuWindow(string message, string[] items, string? title = null,
-        WindowPosition windowPosition = WindowPosition.Center, WindowSize windowSize = WindowSize.Auto)
-        : this(message, items, title, CalculateAutoParams(message, items, windowPosition, windowSize))
+    public MenuWindow(
+        string message,
+        string[] items,
+        string? title = null,
+        WindowPosition windowPosition = WindowPosition.Center,
+        WindowSize windowSize = WindowSize.Auto,
+        ButtonPosition buttonPosition = ButtonPosition.CenterVertically)
+        : this(
+            message,
+            items,
+            title,
+            CalculateAutoParams(message, items, windowPosition, windowSize,
+                buttonPosition),
+            buttonPosition)
     {
     }
 
-    // Private helper constructor that accepts the precomputed tuple (width, height, position)
-    private MenuWindow(string message, string[] items, string? title,
-        (int width, int height, Coordinate position) autoParams)
+    // Private helper constructor that accepts the precomputed tuple
+    // (width, height, position)
+    private MenuWindow(
+        string message,
+        string[] items,
+        string? title,
+        (int width, int height, Coordinate position) autoParams,
+        ButtonPosition buttonPosition)
         : base(message, title, autoParams.width, autoParams.height, autoParams.position)
     {
         this.items = items ?? Array.Empty<string>();
+        this.buttonPosition = buttonPosition;
+        this.buttons = CalculateButtons(this.items, this.buttonPosition, this.position,
+            this.width, this.height, this.message);
     }
 
     // Helper to compute required width/height/position for menu auto mode.
     private static (int width, int height, Coordinate position) CalculateAutoParams(
-        string message, string[] items, WindowPosition windowPosition, WindowSize windowSize)
+        string message,
+        string[] items,
+        WindowPosition windowPosition,
+        WindowSize windowSize,
+        ButtonPosition buttonPosition)
     {
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
@@ -45,34 +79,83 @@ public class MenuWindow : ConsoleWindow
         if (windowSize == WindowSize.FullScreen)
             return (consoleWidth, consoleHeight, new Coordinate(0, 0));
 
-        string[] messageLines = string.IsNullOrEmpty(message) ? Array.Empty<string>() : message.Split('\n');
+        string[] messageLines = string.IsNullOrEmpty(message)
+            ? Array.Empty<string>()
+            : message.Split('\n');
+
         int maxLineLen = 0;
         foreach (var l in messageLines)
-            if (l.Length > maxLineLen) maxLineLen = l.Length;
+            if (l.Length > maxLineLen)
+                maxLineLen = l.Length;
 
-        int maxItemLen = 0;
-        if (items != null)
-            foreach (var it in items)
-                if (it != null && it.Length > maxItemLen) maxItemLen = it.Length;
+        int messageWidth = maxLineLen + 4; // padding for borders
 
-        int messageWidth = maxLineLen + 4;     // padding for borders
-        int itemsWidth = maxItemLen + 6;       // "[ {item} ]" + small margin
-        int effWidth = Math.Clamp(Math.Max(messageWidth, itemsWidth), 10, consoleWidth);
+        int effWidth;
+        int itemsInteriorRows = 0;
 
-        int messageHeight = messageLines.Length + 2;
-        int itemsHeight = items == null || items.Length == 0 ? 0 : (items.Length == 1 ? 3 : items.Length * 2 + 1);
-        int effHeight = Math.Clamp(Math.Max(messageHeight, itemsHeight), 3, consoleHeight);
+        if (items != null && items.Length > 0 &&
+            buttonPosition == ButtonPosition.Horizontal)
+        {
+            // Horizontal layout: compute required horizontal space
+            int n = items.Length;
+            int[] btnLens = new int[n];
+            int totalBtnLen = 0;
+            for (int i = 0; i < n; i++)
+            {
+                int len = (items[i]?.Length ?? 0) + 4; // "[ {text} ]" => +4
+                btnLens[i] = len;
+                totalBtnLen += len;
+            }
+
+            int minSpacing = 3; // minimal spaces between buttons
+            int totalNeededInterior = totalBtnLen + Math.Max(0, (n - 1) * minSpacing);
+
+            // interior width -> window width (+4 padding)
+            int itemsWidth = totalNeededInterior + 4;
+
+            effWidth = Math.Clamp(Math.Max(messageWidth, itemsWidth), 10, consoleWidth);
+
+            // single row for items
+            itemsInteriorRows = 1;
+        }
+        else
+        {
+            // Vertical/default layout
+            int maxItemLen = 0;
+            if (items != null)
+                foreach (var it in items)
+                    if (it != null && it.Length > maxItemLen)
+                        maxItemLen = it.Length;
+
+            int itemsWidth = maxItemLen + 6; // "[ {item} ]" + margin
+            effWidth = Math.Clamp(Math.Max(messageWidth, itemsWidth), 10, consoleWidth);
+
+            // compute interior rows
+            if (items != null && items.Length > 0)
+                itemsInteriorRows = items.Length <= 2 ? 1 : items.Length * 2 - 1;
+            else
+                itemsInteriorRows = 0;
+        }
+
+        int separator = messageLines.Length > 0 ? 1 : 0;
+        int interiorRows = messageLines.Length + separator + itemsInteriorRows;
+
+        int effHeight = Math.Clamp(interiorRows + 2, 3, consoleHeight); // +2 for borders
 
         Coordinate effPosition = windowPosition switch
         {
             WindowPosition.Center => new Coordinate(
                 Math.Max(0, (consoleWidth - effWidth) / 2),
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Left => new Coordinate(0, Math.Max(0, (consoleHeight - effHeight) / 2)),
+            WindowPosition.Left => new Coordinate(
+                0,
+                Math.Max(0, (consoleHeight - effHeight) / 2)),
             WindowPosition.Right => new Coordinate(
                 Math.Max(0, consoleWidth - effWidth),
                 Math.Max(0, (consoleHeight - effHeight) / 2)),
-            WindowPosition.Top => new Coordinate(Math.Max(0, (consoleWidth - effWidth) / 2), 0),
+            WindowPosition.Top => new Coordinate(
+                Math.Max(0, (consoleWidth - effWidth) / 2),
+                0),
             WindowPosition.Bottom => new Coordinate(
                 Math.Max(0, (consoleWidth - effWidth) / 2),
                 Math.Max(0, consoleHeight - effHeight)),
@@ -83,10 +166,9 @@ public class MenuWindow : ConsoleWindow
     }
 
     /// <summary>
-    /// Отобразить меню
+    /// Interactive logic moved here; base.Show() will call this then ClearScreen().
     /// </summary>
-    /// <returns>Возвращает индекс выбранной кнопки</returns>
-    public int Show()
+    protected override int ShowInternal()
     {
         bool shouldContinue = true;
         while (shouldContinue)
@@ -121,42 +203,143 @@ public class MenuWindow : ConsoleWindow
     {
         base.Draw();
 
-        if (items == null || items.Length == 0)
+        if (buttons == null || buttons.Length == 0)
             return;
 
-        int baseY = position.Y + height - 3;
-
-        if (items.Length == 1)
-            DrawButton(items[0], 0, position.X + width / 2, baseY, centered: true);
-        else if (items.Length == 2)
+        for (int i = 0; i < buttons.Length; i++)
         {
-            DrawButton(items[0], 0, position.X + 4, baseY);
-            DrawButton(items[1], 1, position.X + width - items[1].Length - 6, baseY);
-        }
-        else
-        {
-            int totalHeight = items.Length * 2 - 1;
-            int startY = position.Y + (height - totalHeight) / 2;
-            for (int i = 0; i < items.Length; i++)
-                DrawButton(items[i], i, position.X + width / 2, startY + i * 2, centered: true);
+            var b = buttons[i];
+            b.Draw(selected: selectedItemIndex == i);
         }
     }
 
-    /// <summary>
-    /// Отрисовка одной кнопки
-    /// </summary>
-    private void DrawButton(string text, int index, int x, int y, bool centered = false)
+    // Build buttons positions and sizes based on layout rules.
+    private static Button[] CalculateButtons(
+        string[] items,
+        ButtonPosition buttonPosition,
+        Coordinate position,
+        int width,
+        int height,
+        string? message)
     {
-        string b = $"[ {text} ]";
-        int bx = centered ? x - b.Length / 2 : x;
+        if (items == null || items.Length == 0)
+            return Array.Empty<Button>();
 
-        Console.SetCursorPosition(bx, y);
-        if (selectedItemIndex == index)
+        string[] messageLines = string.IsNullOrEmpty(message)
+            ? Array.Empty<string>()
+            : message.Split('\n');
+
+        int messageCount = messageLines.Length;
+        int separator = messageCount > 0 ? 1 : 0;
+        int contentStartY = position.Y + 1 + messageCount + separator; // below message
+        int baseY = position.Y + height - 3; // legacy bottom row
+
+        int interiorStart = position.X + 2;
+        int interiorEnd = position.X + width - 3;
+        int availableSpan = Math.Max(1, interiorEnd - interiorStart + 1);
+
+        int n = items.Length;
+        Button[] result = new Button[n];
+
+        if (buttonPosition == ButtonPosition.Horizontal)
         {
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
+            int y = messageCount > 0 ? contentStartY : baseY;
+
+            // calculate button rendered lengths
+            int[] lens = new int[n];
+            for (int i = 0; i < n; i++)
+                lens[i] = (items[i]?.Length ?? 0) + 4; // "[ {text} ]"
+
+            if (n == 1)
+            {
+                int centerX = position.X + width / 2;
+                result[0] = new Button(items[0], centerX, y, lens[0], centered: true);
+            }
+            else if (n == 2)
+            {
+                int start0 = interiorStart;
+                int start1 = interiorEnd - lens[1] + 1;
+                result[0] = new Button(items[0], start0, y, lens[0]);
+                result[1] = new Button(items[1], start1, y, lens[1]);
+            }
+            else if (n == 3)
+            {
+                int start0 = interiorStart;
+                int centerX = position.X + width / 2;
+                int start2 = interiorEnd - lens[2] + 1;
+                result[0] = new Button(items[0], start0, y, lens[0]);
+                result[1] = new Button(items[1], centerX, y, lens[1], centered: true);
+                result[2] = new Button(items[2], start2, y, lens[2]);
+            }
+            else
+            {
+                double avail = availableSpan;
+                for (int i = 0; i < n; i++)
+                {
+                    double center = interiorStart + ((i + 1) * avail) / (n + 1);
+                    int startX = (int)Math.Round(center - lens[i] / 2.0);
+
+                    // clamp
+                    startX = Math.Max(startX, interiorStart);
+                    startX = Math.Min(startX, interiorEnd - lens[i] + 1);
+
+                    result[i] = new Button(items[i], startX, y, lens[i]);
+                }
+            }
         }
-        Console.Write(b);
-        Console.ResetColor();
+        else // CenterVertically (stacked)
+        {
+            if (messageCount > 0)
+            {
+                int contentStart = contentStartY;
+
+                if (n == 1)
+                {
+                    int centerX = position.X + width / 2;
+                    result[0] = new Button(items[0], centerX, contentStart, (items[0]?.Length ?? 0) + 4,
+                        centered: true);
+                }
+                else if (n == 2)
+                {
+                    int left = position.X + 4;
+                    int right = interiorEnd - ((items[1]?.Length ?? 0) + 4) + 1;
+                    result[0] = new Button(items[0], left, contentStart, (items[0]?.Length ?? 0) + 4);
+                    result[1] = new Button(items[1], right, contentStart,
+                        (items[1]?.Length ?? 0) + 4);
+                }
+                else
+                {
+                    for (int i = 0; i < n; i++)
+                        result[i] = new Button(items[i], position.X + width / 2, contentStart + i * 2,
+                            (items[i]?.Length ?? 0) + 4, centered: true);
+                }
+            }
+            else
+            {
+                // legacy behavior when there's no message
+                int bottomBaseY = baseY;
+
+                if (n == 1)
+                    result[0] = new Button(items[0], position.X + width / 2, bottomBaseY,
+                        (items[0]?.Length ?? 0) + 4, centered: true);
+                else if (n == 2)
+                {
+                    result[0] = new Button(items[0], position.X + 4, bottomBaseY,
+                        (items[0]?.Length ?? 0) + 4);
+                    result[1] = new Button(items[1], interiorEnd - ((items[1]?.Length ?? 0) + 4) + 1,
+                        bottomBaseY, (items[1]?.Length ?? 0) + 4);
+                }
+                else
+                {
+                    int totalHeight = n * 2 - 1;
+                    int startY = position.Y + (height - totalHeight) / 2;
+                    for (int i = 0; i < n; i++)
+                        result[i] = new Button(items[i], position.X + width / 2, startY + i * 2,
+                            (items[i]?.Length ?? 0) + 4, centered: true);
+                }
+            }
+        }
+
+        return result;
     }
 }
