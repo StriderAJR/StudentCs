@@ -1,151 +1,79 @@
-# Рекомендации по C# с примерами
+Не надо смешивать скобочные и безскобочные блоки кода. Или все делаем со скобками или все без скобок.
+Изображение
 
-## 1. Форматирование кода
+Вложенный if внутри else всегда идет или с табуляцией (если это беcскобочная запись) или со скобками + табуляцией. Или если хочется сэкономить место (любите однострочные записи), то else + if идут на одной строчке. Лучше всегда пользоваться или 2 или 3 вариантом. 1 ущербен и никто так не делает по описанным причинам. Или экономим место, или делаем как нужно.
 
-### Скобки и отступы
-
-Выбирайте единый стиль для всего кода: либо со скобками, либо без.
-
-**Варианты:**
-
-```csharp
-// Вариант 1: без скобок, с табуляцией
+```c
+// вариант 1
 if(...) some_operation
 else
-  if(...) another_operation
+  if(...) another operation
   else last_operation
+```
 
-// Вариант 2: со скобками
+```c
+// вариант 2
 if(...) 
 {
   some_operation
 }
 else
 {
-  if(...) another_operation
+  if(...) another operation
   else last_operation
 }
+```
 
-// Вариант 3: однострочный else if
+```c
+// вариант 3
 if(...) some_operation
-else if(...) another_operation
+else if(...) another operation
 else last_operation
 ```
 
-**Чего не делать:**
+А вот так не надо
+Изображение
 
-```csharp
-if(...) some_operation
-else
-if(...) another_operation
-else last_operation
-```
+Нужно использовать говорящие названия переменных
 
-### Висящие блоки кода
+```c
+int num, count, maxValue, result;
+string str, buffer, input, output, fileContent;
+char symbol;
+int[] array;
+int[][] matrix;
 
-Не оставляйте блоки, обрамленные просто фигурными скобками без смысла:
-
-```csharp
-int a = 10;
-{
-   int b = 5;
-   Console.WriteLine(a + b);
-}
-```
-
----
-
-## 2. Именование переменных
-
-### Говорящие имена
-
-```csharp
 int studentCount;
 double percent;
-string fullName;
+string fullName, name, surname;
 int[] coordinates;
+int arraySize;
 double currentDeposit;
 int vectorLength;
 double squareArea, circleArea;
 int[] studentGrades;
 ```
 
-### Допустимые однобуквенные имена
+Использование однобуквенных имен переменных только для общепринятых вещей
 
-```csharp
+```c
 int i, j, k; // счетчики цикла
-char c;      // символ
-int n, m;    // размеры массивов и матриц
+char c; // просто символ, например, при посимвольном просмотре строки
+int n, m; // размеры массивов и матриц
 ```
 
-### Плохие примеры
-
-```csharp
-string number; // кажется число, но это строка
-int c;         // символ
-int[] digit;   // массив, а не одна цифра
-```
-
-### Хорошие варианты имен
-
-```csharp
-string numberStr, strNumber, numberAsStr;
-int number, num, count, length;
-int[] digits, numbers;
-```
-
----
-
-## 3. Операторы и арифметика
-
-* Отделяйте операторы пробелами:
-
-```csharp
-return 0.5 * Math.Asin(distance * 9.8 / (v * v));
-```
-
-* Не создавайте переменные только для возврата значения:
-
-```csharp
-var angle = 0.5 * Math.Asin((distance * g) / (v * v));
-return angle;
-```
-
-Лучше сразу:
-
-```csharp
-return 0.5 * Math.Asin((distance * g) / (v * v));
-```
-
-* Для возведения в квадрат или куб лучше использовать умножение:
-
-```csharp
-return 0.5 * Math.Asin(distance * g / Math.Pow(v, 2));
-```
-
-* Магические числа выносите в константы:
-
-```csharp
-float g = 9.8;
-return 0.5 * Math.Asin((g * distance) / (v * v));
-```
-
----
-
-## 4. Булевы выражения
-
-Не нужно явно возвращать `true` или `false` при проверке условия.
-
-**Плохо:**
+Не нужно возвращать явно значение true или false в случаях, когда идет проверка условия.
 
 ```csharp
 private bool CorrectMonth(int month)
 {
-    return (month >= 1 && month <= 12) ? true : false;
+    return (month >= 1 && month <= 12)
+        ? true
+        : false;
 }
 ```
 
-**Правильно:**
+Правильнее писать сразу возврат результата условия.
 
 ```csharp
 private bool CorrectMonth(int month)
@@ -154,55 +82,74 @@ private bool CorrectMonth(int month)
 }
 ```
 
-**Пример инверсии:**
+Не делайте висящие в воздухе блоки кода. Почти наверняка вы недоразбили метод на более мелкие части из-за чего вам понадобились переменные с одним именем
+Изображение
+
+Операторы не выделены пробелами:
 
 ```csharp
-return !condition;
+return 0.5*Math.Asin(distance*9.8/(v*v));
 ```
 
----
-
-## 5. Ветвления и циклы
-
-### If / Else
-
-Если в ветке идет `return`, `else` не нужен:
+Лучше делать так:
 
 ```csharp
-if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
-if (count % 10 == 1) return "рубль";
-return "рубля";
+return 0.5 * Math.Asin(distance * 9.8 / (v * v));
 ```
 
-### Вложенные ветвления
+Не нужно создавать отдельную переменную, чтобы вернуть ее значение:
 
 ```csharp
-int lastTwoDigits = count % 100;
-int lastDigit = count % 10;
-if (lastTwoDigits >= 5 && lastTwoDigits <= 20) return "рублей";
-if (lastDigit >= 2 && lastDigit <= 4) return "рубля";
-if (lastDigit == 1) return "рубль";
-return "рублей";
+var angle = 0.5 * Math.Asin((distance * g) / (v * v));
+return angle;
 ```
 
-### Циклы
-
-* Если известен счёт итераций — `for`.
-* Бесконечные циклы — `while(true)`.
+нужно так:
 
 ```csharp
-for(; ;) {} // плохо
-while(true){} // хорошо
+return 0.5 * Math.Asin((distance * g) / (v * v));
 ```
 
----
+Неэффективный код. Если число нужно возвести в квадрат или куб, лучше сделать это с помощью умножения, не используя более общий, но менее быстрый Math.Pow.
 
-## 6. Методы и повторяемость кода
+```csharp
+return 0.5 * Math.Asin(distance * g / Math.Pow(v,2));
+```
 
-* Разделяйте программу на методы, чтобы улучшить читаемость.
-* Не используйте вложенные методы.
+Для "волшебных чисел" лучше создавать отдельные константы или переменные с говорящими именами.
 
-**Плохо (вложенные методы):**
+```csharp
+return 0.5 * Math.Asin((9.8 * distance) / (v * v));
+```
+
+нужно так:
+
+```csharp
+float g = 9.8;
+return 0.5 * Math.Asin((g * distance) / (v * v));
+```
+
+Не оставляйте ненужных комментариев в коде
+
+```csharp
+public static double BounceWall(double directionRadians, double wallInclinationRadians)
+{
+    // TODO - если код готов к проверке, то этот комментарий не нужен
+    return 2 * wallInclinationRadians - directionRadians;
+}
+```
+
+Сюда же идут незаполненные части комментариев-документации
+
+должно быть так:
+
+```csharp
+/// <param name="directionRadians">Угол направления движения шара</param>
+/// <param name="wallInclinationRadians">Угол</param>
+/// <returns></returns>
+```
+
+Не используйте вложенные методы
 
 ```csharp
 public static void Main()
@@ -218,11 +165,11 @@ public static void Main()
         return sum;
     }
     int num = int.Parse(Console.ReadLine());
-    Console.WriteLine(Sum(num));
+    Console.WriteLine(Sum(num))
 }
 ```
 
-**Правильно:**
+Нужно было так:
 
 ```csharp
 int Sum(int num)
@@ -239,36 +186,120 @@ int Sum(int num)
 public static void Main()
 {
     int num = int.Parse(Console.ReadLine());
-    Console.WriteLine(Sum(num));
+    Console.WriteLine(Sum(num))
 }
 ```
 
-**Пример разбиения на методы:**
+Выбирайте правильно тип цикла. Бесконечные циклы лучше делать через while, а если известно кол-во итераций, то for
 
 ```csharp
-static int SumOfDigits(string str) { ... }
-static string ReverseString(string str) { ... }
+for (; ;) {} // плохой выбор
+while(true){} // хороший выбор
+```
 
-public static void Main()
+Создавайте переменные как можно ближе к их использованию
+
+```csharp
+int a = Convert.ToInt32(Console.ReadLine());
+int fac = 1;
+if (a > 0)
 {
-    string numberStr = Console.ReadLine();    
-    int x = Convert.ToInt32(numberStr);
-
-    if (x >= 0)
+    for (int i = 1; i < a + 1; i++)
     {
-        if (SumOfDigits(numberStr) % 2 == 0)
-            Console.WriteLine("чётное");
-        if (x % 2 != 0)
-            Console.WriteLine(ReverseString(numberStr));
+        fac = fac * i;
     }
+    Console.WriteLine(fac);
 }
 ```
 
----
+нужно вот так:
 
-## 7. Избегание повторяемого кода
+```csharp
+int a = Convert.ToInt32(Console.ReadLine());
+if (a > 0)
+{
+    int fac = 1;
+    for (int i = 1; i < a + 1; i++)
+    {
+        fac = fac * i;
+    }
+    Console.WriteLine(fac);
+}
+```
 
-**Плохо:**
+Непонятные "части" после разбиения строки
+
+```csharp
+double[] nums = Array.ConvertAll(userInput.Split(' '), double.Parse);
+return nums[0] * Math.Pow(1 + (nums[1] / 1200), nums[2]);
+```
+
+Как нужно:
+
+```csharp
+var parts = userInput.Split();
+var sum = double.Parse(parts[0]);
+var interestRate = double.Parse(parts[1]);
+var monthCount = double.Parse(parts[2]);
+return sum * Math.Pow(1 + interestRate / 12.0 / 100, monthCount);
+```
+
+Если есть одно и то же повторяющееся вычисление, лучше выделять его в отдельную переменную
+
+```csharp
+if (count % 100 >= 5 && count % 100 <= 20) return "рублей";
+if (count % 10 >= 2 && count % 10 <= 4) return "рубля";
+if (count % 10 == 1) return "рубль";
+else return "рублей";
+```
+
+лучше так:
+
+```csharp
+int lastTwoDigits = count % 100;
+int lastDigit = count % 10;
+if (lastTwoDigits >= 5 && lastTwoDigits <= 20) return "рублей";
+if (lastDigit >= 2 && lastDigit <= 4) return "рубля";
+if (lastDigit == 1) return "рубль";
+else return "рублей";
+```
+
+В ветвлениях, если в одной из веток идет return, то в else нет смысла.
+
+Неправильно:
+
+```csharp
+if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
+else if (count % 10 == 1) return "рубль";
+else return "рубля";
+```
+
+Как нужно:
+
+```csharp
+if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
+if (count % 10 == 1) return "рубль";
+return "рубля";
+```
+
+Не нужно в явном виде возвращать true и false, если есть какая-то проверка.
+
+```csharp
+if (condition)
+{
+    return false;
+}
+return true;
+```
+
+Можно сразу возвращать результат проверки.
+
+```csharp
+return condition;
+return !condition;
+```
+
+Повторяемость кода нужно избегать
 
 ```csharp
 double ak = Math.Sqrt((x - ax) * (x - ax) + (y - ay) * (y - ay));
@@ -276,7 +307,7 @@ double kb = Math.Sqrt((x - bx) * (x - bx) + (y - by) * (y - by));
 double ab = Math.Sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
 ```
 
-**Правильно:**
+достаточно создать метод
 
 ```csharp
 double ak = GetDistanceBetweenPoints(ax, ay, x, y);
@@ -289,81 +320,214 @@ double GetDistanceBetweenPoints(double x1, double y1, double x2, double y2)
 }
 ```
 
----
+Методы используются не только для уменьшения повторяемости кода, но и для разбиения программы на логические куски.
 
-## 8. Работа с файлами
+```csharp
+public static void Main()
+{
+    string numberStr = Console.ReadLine();    
+    int x = Convert.ToInt32(numberStr);
 
-* Никогда не используйте абсолютные пути.
+    if (x >= 0)
+    {
+        int countDigits = str.Length;
+        int sum = 0;
+        while (countDigits != 0)
+        {
+            sum += Convert.ToInt32(str.Substring(0, 1));
+            countDigits -= 1;
+            str = str.Substring(1, countDigits);
+        }
+
+        if (sum % 2 == 0)
+        {
+            Console.WriteLine("чётное");
+        }
+        if (x % 2 != 0)
+        {
+            string reverString = "";
+            while (str != "")
+            {
+                reverString += str.Substring(str.Length - 1, 1);
+                str = str.Substring(0, str.Length - 1);
+            }
+
+            Console.WriteLine(reverString);
+        }
+    }
+    else
+    {
+        return;
+    }
+}
+```
+
+Лучше (более читаемо и удобно в обслуживании) вот так:
+
+```csharp
+static int SumOfDigits(string str)
+{
+    int countDigits = str.Length;
+    int sum = 0;
+    while (countDigits != 0)
+    {
+        sum += Convert.ToInt32(str.Substring(0, 1));
+        countDigits -= 1;
+        str = str.Substring(1, countDigits);
+    }
+    return sum;
+}
+
+static string ReverseString(string str)
+{
+    string reverString = "";
+    while (str != "")
+    {
+        reverString += str.Substring(str.Length - 1, 1);
+        str = str.Substring(0, str.Length - 1);
+    }
+    return reverString;
+}
+
+public static void Main()
+{
+    string numberStr = Console.ReadLine();    
+    int x = Convert.ToInt32(numberStr);
+
+    if (x >= 0)
+    {
+        if (SumOfDigits(numberStr) % 2 == 0)
+        {
+            Console.WriteLine("чётное");
+        }
+        if (x % 2 != 0)
+        {
+            Console.WriteLine(ReverseString(numberStr));
+        }
+    }
+    else
+    {
+        return;
+    }
+}
+```
+
+Будьте аккуратны с именами переменных. Плохие примеры:
+
+```csharp
+string number; // в коде будет казаться, что это число, но на деле это строка
+int c; // с - зарезервированное имя для символа
+int[] digit; // здесь не одна цифра, а массив чисел
+```
+
+Для этих примеров хорошие варианты именования:
+
+```csharp
+string numberStr, strNumber, numberAsStr; // это дает понять, что в строке записано число, но это все-таки строка
+int number, num, count, length; // названия именно для чисел
+int[] digits, numbers; // если это массив, то название обязательно во множественном числе
+```
+
+В рамках курса не разрешается использовать вложенные методы.
+
+```csharp
+public void Method1()
+{
+    public void Method2()
+    {
+        // тело Method2
+    }
+    // тело Method1
+}
+```
+
+Нужно так:
+
+```csharp
+public void Method2()
+{
+    // тело Method2
+}
+
+public void Method1()
+{
+    // тело Method1
+}
+```
+
+Никогда не используйте абсолютные пути к файлам.
 
 ```csharp
 string[] lines = File.ReadAllLines(@"C:\VasyaPupkin\my_cool_program\bin\Debug\net8.0\example.txt");
 ```
 
-* Используйте относительные пути:
+Используйте относительные пути:
 
 ```csharp
 string[] lines = File.ReadAllLines(@".\example.txt");
 string[] lines = File.ReadAllLines(@"..\..\..\..\example.txt");
 ```
 
-**Пример улучшенной работы с файлами:**
+Пример исправленного кода с Main и методами для работы с балансом:
 
 ```csharp
-string[] lines = File.ReadAllLines("./bank-balance.txt");
-var initialBalance = int.Parse(lines[0]);
-int currentBalance = initialBalance;
-Stack<int> balanceHistory = new Stack<int>(new List<int>{0});
-
-for (int i = 1; i < lines.Length; i++)
+public static void Main(string[] args)
 {
-    (string command, int operationSum) = ParseLine(lines[i]);
-    currentBalance = ApplyOperation(command, currentBalance, operationSum, balanceHistory);
-    if (currentBalance < 0)
+    string[] lines = File.ReadAllLines("./bank-balance.txt"); 
+    var initialBalance = int.Parse(lines[0]); 
+    
+    int currentBalance = initialBalance;
+    Stack<int> balanceHistory = new Stack<int>(new List<int>{ 0 }); 
+    for (int i = 1; i < lines.Length; i++)
     {
-        Console.WriteLine("Ошибка. Недостаточно средств");
-        break;
-    }
-}
-Console.WriteLine(currentBalance);
+        (string command, int operationSum) = ParseLine(lines[i]);
+        currentBalance = ApplyOperation(command, currentBalance, operationSum, balanceHistory);
 
-public static (string, int) ParseLine(string line) { ... }
-public static int ApplyOperation(string command, int currentBalance, int operationSum, Stack<int> balanceHistory) { ... }
+        if (currentBalance < 0)
+        {
+            Console.WriteLine("Ошибка. Недостаточно средств");
+            break; 
+        }
+    }
+    Console.WriteLine(currentBalance);
+}
+
+public static (string, int) ParseLine(string line)
+{
+    string[] parts = line.Split('|', StringSplitOptions.TrimEntries); 
+    string datetime = parts[0];
+
+    string command;
+    int operationSum = 0;
+    if (parts.Length < 3)
+    {
+        command = parts[1];
+    }
+    else
+    {
+        operationSum = int.Parse(parts[1]);
+        command = parts[2];
+    }
+
+    return (command, operationSum);
+}
+
+public static int ApplyOperation(string command, int currentBalance, int operationSum, Stack<int> balanceHistory)
+{
+    if (command == "revert")
+        return balanceHistory.Pop();
+
+    balanceHistory.Push(currentBalance);
+    if (command == "in")
+        currentBalance = currentBalance + operationSum;
+    else if (command == "out")
+        currentBalance = currentBalance - operationSum;
+
+    return currentBalance;
+}
 ```
 
----
-
-## 9. Пример калькулятора
-
-**Плохо:**
-
-```csharp
-string buf = Console.ReadLine();
-int num1;
-while (int.TryParse(buf, out num1))
-{
-    Console.WriteLine("Некорректный ввод...");
-    buf = Console.ReadLine();
-}
-
-string operation = Console.ReadLine();
-buf = Console.ReadLine();
-int? num2 = null;
-if (!string.IsNullOrEmpty(buf))
-{
-    int tempNum;
-    while (int.TryParse(buf, out tempNum))
-    {
-        Console.WriteLine("Некорректный ввод...");
-        buf = Console.ReadLine();
-    }
-    num2 = tempNum;
-}
-
-if (operation == "+") Console.WriteLine(num1 + num2);
-else if (operation == "-") Console.WriteLine(num1 - num2);
-```
-
-**Правильно (с методами и `switch`):**
+Пример исправленного калькулятора с проверкой ввода и разбиением на методы:
 
 ```csharp
 public static void Main(string[] args)
@@ -372,27 +536,55 @@ public static void Main(string[] args)
     int? num2 = ReadNumber(true);
     string operation = ReadOperation();
 
-    double result = operation switch
+    double result = 0;
+    switch (operation)
     {
-        "+" => num1 + num2.Value,
-        "-" => num1 - num2.Value,
-        "*" => num1 * num2.Value,
-        "/" => num1 / num2.Value,
-        "!" => Factorial(num1),
-        "log" => Math.Log(num1, num2.Value),
-        "dsum" => GetDigitsSum(num1),
-        _ => 0
-    };
+        case "+": result = num1 + num2.Value; break;
+        case "-": result = num1 - num2.Value; break;
+        case "*": result = num1 * num2.Value; break;
+        case "/": result = num1 / num2.Value; break;
+        case "!": result = Factorial(num1); break;
+        case "log": result = Math.Log(num1, num2.Value); break;
+        case "dsum": result = GetDigitsSum(num1); break;
+    }
 
     Console.WriteLine(result);
 }
 
-public static int? ReadNumber(bool allowEmpty = false) { ... }
-public static string ReadOperation() { ... }
+public static int? ReadNumber(bool allowEmpty = false)
+{
+    string buf = Console.ReadLine();
+
+    if (allowEmpty && string.IsNullOrEmpty(buf)) return null;
+
+    int num;
+    while (int.TryParse(buf, out num))
+    {
+        Console.WriteLine("Некорректный ввод. Введите целое число, положительное или отрицательное");
+        buf = Console.ReadLine();
+    }
+
+    return num;
+}
+
+public static string ReadOperation()
+{
+    string[] allowedOperations = { "+", "-", "*", "/", "!", "dsum" };
+
+    do
+    {
+        string operation = Console.ReadLine();
+        if (allowedOperations.Contains(operation)) return operation;
+
+        Console.WriteLine($"Неизвестная операция '{operation}'. Повторите ввод");
+    } while (true);
+}
+
 public static int Factorial(int num)
 {
     int factorial = 1;
-    for (int i = 2; i < num; i++) factorial *= i;
+    for (int i = 2; i < num; i++)
+        factorial *= i;
     return factorial;
 }
 
