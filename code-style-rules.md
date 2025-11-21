@@ -1,9 +1,13 @@
+# Стиль и структура кода
+
+## Скобочные и безскобочные блоки кода
+
 Не надо смешивать скобочные и безскобочные блоки кода. Или все делаем со скобками или все без скобок.
 Изображение
 
 Вложенный if внутри else всегда идет или с табуляцией (если это беcскобочная запись) или со скобками + табуляцией. Или если хочется сэкономить место (любите однострочные записи), то else + if идут на одной строчке. Лучше всегда пользоваться или 2 или 3 вариантом. 1 ущербен и никто так не делает по описанным причинам. Или экономим место, или делаем как нужно.
 
-```c
+```csharp
 // вариант 1
 if(...) some_operation
 else
@@ -11,7 +15,7 @@ else
   else last_operation
 ```
 
-```c
+```csharp
 // вариант 2
 if(...) 
 {
@@ -24,7 +28,7 @@ else
 }
 ```
 
-```c
+```csharp
 // вариант 3
 if(...) some_operation
 else if(...) another operation
@@ -34,9 +38,13 @@ else last_operation
 А вот так не надо
 Изображение
 
+## Именование переменных
+
+### Говорящие названия
+
 Нужно использовать говорящие названия переменных
 
-```c
+```csharp
 int num, count, maxValue, result;
 string str, buffer, input, output, fileContent;
 char symbol;
@@ -54,13 +62,37 @@ double squareArea, circleArea;
 int[] studentGrades;
 ```
 
+### Однобуквенные имена
+
 Использование однобуквенных имен переменных только для общепринятых вещей
 
-```c
+```csharp
 int i, j, k; // счетчики цикла
 char c; // просто символ, например, при посимвольном просмотре строки
 int n, m; // размеры массивов и матриц
 ```
+
+### Аккуратность с именами переменных
+
+Будьте аккуратны с именами переменных. Плохие примеры:
+
+```csharp
+string number; // в коде будет казаться, что это число, но на деле это строка
+int c; // с - зарезервированное имя для символа
+int[] digit; // здесь не одна цифра, а массив чисел
+```
+
+Для этих примеров хорошие варианты именования:
+
+```csharp
+string numberStr, strNumber, numberAsStr; // это дает понять, что в строке записано число, но это все-таки строка
+int number, num, count, length; // названия именно для чисел
+int[] digits, numbers; // если это массив, то название обязательно во множественном числе
+```
+
+# Логические конструкции и условия
+
+## Неявное возвращение true/false
 
 Не нужно возвращать явно значение true или false в случаях, когда идет проверка условия.
 
@@ -82,74 +114,46 @@ private bool CorrectMonth(int month)
 }
 ```
 
-Не делайте висящие в воздухе блоки кода. Почти наверняка вы недоразбили метод на более мелкие части из-за чего вам понадобились переменные с одним именем
-Изображение
+## Ветвления и return
 
-Операторы не выделены пробелами:
+В ветвлениях, если в одной из веток идет return, то в else нет смысла.
+
+Неправильно:
 
 ```csharp
-return 0.5*Math.Asin(distance*9.8/(v*v));
+if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
+else if (count % 10 == 1) return "рубль";
+else return "рубля";
 ```
 
-Лучше делать так:
+Как нужно:
 
 ```csharp
-return 0.5 * Math.Asin(distance * 9.8 / (v * v));
+if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
+if (count % 10 == 1) return "рубль";
+return "рубля";
 ```
 
-Не нужно создавать отдельную переменную, чтобы вернуть ее значение:
+Не нужно в явном виде возвращать true и false, если есть какая-то проверка.
 
 ```csharp
-var angle = 0.5 * Math.Asin((distance * g) / (v * v));
-return angle;
-```
-
-нужно так:
-
-```csharp
-return 0.5 * Math.Asin((distance * g) / (v * v));
-```
-
-Неэффективный код. Если число нужно возвести в квадрат или куб, лучше сделать это с помощью умножения, не используя более общий, но менее быстрый Math.Pow.
-
-```csharp
-return 0.5 * Math.Asin(distance * g / Math.Pow(v,2));
-```
-
-Для "волшебных чисел" лучше создавать отдельные константы или переменные с говорящими именами.
-
-```csharp
-return 0.5 * Math.Asin((9.8 * distance) / (v * v));
-```
-
-нужно так:
-
-```csharp
-float g = 9.8;
-return 0.5 * Math.Asin((g * distance) / (v * v));
-```
-
-Не оставляйте ненужных комментариев в коде
-
-```csharp
-public static double BounceWall(double directionRadians, double wallInclinationRadians)
+if (condition)
 {
-    // TODO - если код готов к проверке, то этот комментарий не нужен
-    return 2 * wallInclinationRadians - directionRadians;
+    return false;
 }
+return true;
 ```
 
-Сюда же идут незаполненные части комментариев-документации
-
-должно быть так:
+Можно сразу возвращать результат проверки.
 
 ```csharp
-/// <param name="directionRadians">Угол направления движения шара</param>
-/// <param name="wallInclinationRadians">Угол</param>
-/// <returns></returns>
+return condition;
+return !condition;
 ```
 
-Не используйте вложенные методы
+# Работа с кодом и методами
+
+## Не использовать вложенные методы
 
 ```csharp
 public static void Main()
@@ -190,135 +194,7 @@ public static void Main()
 }
 ```
 
-Выбирайте правильно тип цикла. Бесконечные циклы лучше делать через while, а если известно кол-во итераций, то for
-
-```csharp
-for (; ;) {} // плохой выбор
-while(true){} // хороший выбор
-```
-
-Создавайте переменные как можно ближе к их использованию
-
-```csharp
-int a = Convert.ToInt32(Console.ReadLine());
-int fac = 1;
-if (a > 0)
-{
-    for (int i = 1; i < a + 1; i++)
-    {
-        fac = fac * i;
-    }
-    Console.WriteLine(fac);
-}
-```
-
-нужно вот так:
-
-```csharp
-int a = Convert.ToInt32(Console.ReadLine());
-if (a > 0)
-{
-    int fac = 1;
-    for (int i = 1; i < a + 1; i++)
-    {
-        fac = fac * i;
-    }
-    Console.WriteLine(fac);
-}
-```
-
-Непонятные "части" после разбиения строки
-
-```csharp
-double[] nums = Array.ConvertAll(userInput.Split(' '), double.Parse);
-return nums[0] * Math.Pow(1 + (nums[1] / 1200), nums[2]);
-```
-
-Как нужно:
-
-```csharp
-var parts = userInput.Split();
-var sum = double.Parse(parts[0]);
-var interestRate = double.Parse(parts[1]);
-var monthCount = double.Parse(parts[2]);
-return sum * Math.Pow(1 + interestRate / 12.0 / 100, monthCount);
-```
-
-Если есть одно и то же повторяющееся вычисление, лучше выделять его в отдельную переменную
-
-```csharp
-if (count % 100 >= 5 && count % 100 <= 20) return "рублей";
-if (count % 10 >= 2 && count % 10 <= 4) return "рубля";
-if (count % 10 == 1) return "рубль";
-else return "рублей";
-```
-
-лучше так:
-
-```csharp
-int lastTwoDigits = count % 100;
-int lastDigit = count % 10;
-if (lastTwoDigits >= 5 && lastTwoDigits <= 20) return "рублей";
-if (lastDigit >= 2 && lastDigit <= 4) return "рубля";
-if (lastDigit == 1) return "рубль";
-else return "рублей";
-```
-
-В ветвлениях, если в одной из веток идет return, то в else нет смысла.
-
-Неправильно:
-
-```csharp
-if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
-else if (count % 10 == 1) return "рубль";
-else return "рубля";
-```
-
-Как нужно:
-
-```csharp
-if (count % 10 == 0 || count % 10 >= 5 || (count % 100 >= 10 && count % 100 <= 19)) return "рублей";
-if (count % 10 == 1) return "рубль";
-return "рубля";
-```
-
-Не нужно в явном виде возвращать true и false, если есть какая-то проверка.
-
-```csharp
-if (condition)
-{
-    return false;
-}
-return true;
-```
-
-Можно сразу возвращать результат проверки.
-
-```csharp
-return condition;
-return !condition;
-```
-
-Повторяемость кода нужно избегать
-
-```csharp
-double ak = Math.Sqrt((x - ax) * (x - ax) + (y - ay) * (y - ay));
-double kb = Math.Sqrt((x - bx) * (x - bx) + (y - by) * (y - by));
-double ab = Math.Sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
-```
-
-достаточно создать метод
-
-```csharp
-double ak = GetDistanceBetweenPoints(ax, ay, x, y);
-double kb = GetDistanceBetweenPoints(bx, by, x, y);
-double ab = GetDistanceBetweenPoints(bx, by, ax, ay);
-
-double GetDistanceBetweenPoints(double x1, double y1, double x2, double y2)
-{
-    return Math.Sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-}
-```
+## Разбиение программы на методы
 
 Методы используются не только для уменьшения повторяемости кода, но и для разбиения программы на логические куски.
 
@@ -412,48 +288,88 @@ public static void Main()
 }
 ```
 
-Будьте аккуратны с именами переменных. Плохие примеры:
+# Циклы
+
+Выбирайте правильно тип цикла. Бесконечные циклы лучше делать через while, а если известно кол-во итераций, то for
 
 ```csharp
-string number; // в коде будет казаться, что это число, но на деле это строка
-int c; // с - зарезервированное имя для символа
-int[] digit; // здесь не одна цифра, а массив чисел
+for (; ;) {} // плохой выбор
+while(true){} // хороший выбор
 ```
 
-Для этих примеров хорошие варианты именования:
+Создавайте переменные как можно ближе к их использованию
 
 ```csharp
-string numberStr, strNumber, numberAsStr; // это дает понять, что в строке записано число, но это все-таки строка
-int number, num, count, length; // названия именно для чисел
-int[] digits, numbers; // если это массив, то название обязательно во множественном числе
-```
-
-В рамках курса не разрешается использовать вложенные методы.
-
-```csharp
-public void Method1()
+int a = Convert.ToInt32(Console.ReadLine());
+int fac = 1;
+if (a > 0)
 {
-    public void Method2()
+    for (int i = 1; i < a + 1; i++)
     {
-        // тело Method2
+        fac = fac * i;
     }
-    // тело Method1
+    Console.WriteLine(fac);
 }
 ```
 
-Нужно так:
+нужно вот так:
 
 ```csharp
-public void Method2()
+int a = Convert.ToInt32(Console.ReadLine());
+if (a > 0)
 {
-    // тело Method2
-}
-
-public void Method1()
-{
-    // тело Method1
+    int fac = 1;
+    for (int i = 1; i < a + 1; i++)
+    {
+        fac = fac * i;
+    }
+    Console.WriteLine(fac);
 }
 ```
+
+# Эффективность кода
+
+## Вычисления и повторяемость
+
+Неэффективный код. Если число нужно возвести в квадрат или куб, лучше сделать это с помощью умножения, не используя более общий, но менее быстрый Math.Pow.
+
+```csharp
+return 0.5 * Math.Asin(distance * g / Math.Pow(v,2));
+```
+
+Если есть одно и то же повторяющееся вычисление, лучше выделять его в отдельную переменную
+
+```csharp
+int lastTwoDigits = count % 100;
+int lastDigit = count % 10;
+if (lastTwoDigits >= 5 && lastTwoDigits <= 20) return "рублей";
+if (lastDigit >= 2 && lastDigit <= 4) return "рубля";
+if (lastDigit == 1) return "рубль";
+else return "рублей";
+```
+
+Повторяемость кода нужно избегать
+
+```csharp
+double ak = Math.Sqrt((x - ax) * (x - ax) + (y - ay) * (y - ay));
+double kb = Math.Sqrt((x - bx) * (x - bx) + (y - by) * (y - by));
+double ab = Math.Sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
+```
+
+достаточно создать метод
+
+```csharp
+double ak = GetDistanceBetweenPoints(ax, ay, x, y);
+double kb = GetDistanceBetweenPoints(bx, by, x, y);
+double ab = GetDistanceBetweenPoints(bx, by, ax, ay);
+
+double GetDistanceBetweenPoints(double x1, double y1, double x2, double y2)
+{
+    return Math.Sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+}
+```
+
+# Работа с файлами
 
 Никогда не используйте абсолютные пути к файлам.
 
@@ -527,7 +443,7 @@ public static int ApplyOperation(string command, int currentBalance, int operati
 }
 ```
 
-Пример исправленного калькулятора с проверкой ввода и разбиением на методы:
+# Калькулятор с проверкой ввода
 
 ```csharp
 public static void Main(string[] args)
