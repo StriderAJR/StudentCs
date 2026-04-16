@@ -126,4 +126,4 @@
 
 # Проект "Пошаговая стратения"
 
-[Лабораторные работы](https://github.com/StriderAJR/StudentCs/blob/main/project-steps.md)
+[Лабораторные работы](https://gitlab.com/StriderAJR/StudentCs/blob/main/project-steps.md)
