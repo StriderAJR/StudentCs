@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fractions", "Fractions", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleWpf", "ExampleWpf\ExampleWpf.csproj", "{CE9E6A6A-4B3B-474A-82A6-5559F4D8171D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.Wpf", "StategyGame\StrategyGame.Wpf\StrategyGame.Wpf.csproj", "{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.Wpf", "StrategyGame\StrategyGame.Wpf\StrategyGame.Wpf.csproj", "{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.Logic", "StrategyGame\StrategyGame.Logic\StrategyGame.Logic.csproj", "{35F2BF7D-F765-4988-B78A-F16E3D3EC381}"
 EndProject
