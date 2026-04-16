@@ -1,7 +1,8 @@
 using System.IO;
-using StrategyGame.Wpf.Models;
+using StrategyGame.Logic;
+using StrategyGame.Logic.Models;
 
-namespace StrategyGame.Wpf.Game;
+namespace StrategyGame.Logic.Game;
 
 public static class MapFileLoader
 {

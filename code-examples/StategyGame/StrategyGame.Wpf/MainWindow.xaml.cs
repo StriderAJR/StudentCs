@@ -4,8 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using StrategyGame.Wpf.Game;
-using StrategyGame.Wpf.Models;
+using StrategyGame.Logic;
+using StrategyGame.Logic.Models;
 
 namespace StrategyGame.Wpf;
 

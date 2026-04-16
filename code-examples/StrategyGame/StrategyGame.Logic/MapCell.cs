@@ -1,4 +1,4 @@
-﻿namespace StrategyGame.ConsoleGame;
+namespace StrategyGame.Logic;
 
 public enum MapCell
 {

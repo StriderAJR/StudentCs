@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleWpf", "ExampleWpf\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.Wpf", "StategyGame\StrategyGame.Wpf\StrategyGame.Wpf.csproj", "{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyGame.Logic", "StrategyGame\StrategyGame.Logic\StrategyGame.Logic.csproj", "{35F2BF7D-F765-4988-B78A-F16E3D3EC381}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F2B3542-F6C0-4E6F-99CE-49335669EE4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35F2BF7D-F765-4988-B78A-F16E3D3EC381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35F2BF7D-F765-4988-B78A-F16E3D3EC381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35F2BF7D-F765-4988-B78A-F16E3D3EC381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35F2BF7D-F765-4988-B78A-F16E3D3EC381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{4F12EDA5-A6D8-4216-B814-9C5AC191BD4E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D892D253-9D27-4F36-8428-ABD1ADF3E5C0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{9F2B3542-F6C0-4E6F-99CE-49335669EE4A} = {02414A1B-66F7-439B-BBE0-8D8121C41964}
+		{35F2BF7D-F765-4988-B78A-F16E3D3EC381} = {02414A1B-66F7-439B-BBE0-8D8121C41964}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA9E177-3170-48B4-9805-43BC4E3C4D45}

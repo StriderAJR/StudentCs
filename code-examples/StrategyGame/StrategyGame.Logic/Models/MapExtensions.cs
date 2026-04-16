@@ -1,4 +1,6 @@
-namespace StrategyGame.Wpf.Models;
+using StrategyGame.Logic;
+
+namespace StrategyGame.Logic.Models;
 
 public static class MapExtensions
 {

@@ -1,4 +1,4 @@
-﻿namespace StrategyGame.ConsoleGame;
+namespace StrategyGame.Logic.Models;
 
 public enum PlayerType
 {

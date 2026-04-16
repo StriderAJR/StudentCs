@@ -1,4 +1,5 @@
 ﻿using StrategyGame.ConsoleGame.UI.CustomConsole;
+using StrategyGame.Logic.Models;
 
 namespace StrategyGame.ConsoleGame.UI;
 

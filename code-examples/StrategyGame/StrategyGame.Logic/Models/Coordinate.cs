@@ -1,4 +1,4 @@
-namespace StrategyGame.Wpf.Models;
+namespace StrategyGame.Logic.Models;
 
 public readonly struct Coordinate
 {

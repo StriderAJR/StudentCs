@@ -14,4 +14,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\StrategyGame\StrategyGame.Logic\StrategyGame.Logic.csproj" />
+  </ItemGroup>
+
 </Project>

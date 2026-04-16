@@ -1,4 +1,6 @@
-namespace StrategyGame.Wpf.Models;
+using StrategyGame.Logic.Models;
+
+namespace StrategyGame.Logic;
 
 public class Player
 {
