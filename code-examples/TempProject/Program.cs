@@ -1,60 +1,49 @@
-﻿using System.Net;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
 
-namespace Table
+namespace TempProject;
+
+// + yield return
+// + интерфейсы
+// + списки, словари, стек, очереди, компоновщик
+// + Exceptions
+// + перегрузка операторов
+// + IEnumerable, IEnumerator
+// + дженерики
+// + делегаты
+// + LINQ
+// + unit тесты
+
+// разбиение программы на проекты
+
+// Многопоточное программирование. Класс Thread. Потоки и блокировки. async и await. Блокирование потока GUI. BackgroundWorker
+// Потокобезопасность. Что такое race condition, зачем нужен lock, чем async/await отличается от многопоточности.
+
+class Program
 {
-    // перегрузка методов
-    // ЗАБЫЛ про ref
-
-    enum PlayerType
+    public static async Task Main()
     {
-        Knight,
-        Ranger,
-        Mage
-    }
+        Stopwatch sp = Stopwatch.StartNew();
 
-    class Player
-    {
-        public string Name;
-        public PlayerType Type;
+        ConcurrentBag<int> list = new ConcurrentBag<int>();
 
-        private int hp;
-
-        public Player(string name) : this(name, PlayerType.Ranger, 100)
+        // ThreadPool
+        Parallel.For(0, 1000, i =>
         {
-        }
+            list.Add(i);
+        });
 
-        public Player(string name, PlayerType type, int hp)
+        var thread = new Thread(() =>
         {
-            Name = name;
-            Type = type;
-            this.hp = hp;
-        }
+            Console.WriteLine("Hello");
+        });
 
-        public int Add()
-        {
-            return 3;
-        }
-    }
+        thread.Start();
 
-    static class Example
-    {
-        public static string Name;
 
-        public static int Add()
-        {
-            return 3;
-        }
-    }
-
-    class Program
-    {
-        public static void Main()
-        {
-            Player p1 = new Player("Vanya", PlayerType.Ranger, 100);
-
-            p1.Name = "Vanya";
-            p1.Type = PlayerType.Knight;
-            p1.Type = (PlayerType) 1;
-        }
+        Console.WriteLine(list.Count);
+        Console.WriteLine(sp.ElapsedMilliseconds);
     }
 }

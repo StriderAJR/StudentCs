@@ -1,0 +1,40 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" x:Class="ExampleWpf.MainWindow"
+        Title="Demo Game" Height="600" Width="800">
+    <Grid>
+        <!-- Menu -->
+        <StackPanel x:Name="MenuPanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Button Content="Новая игра" Click="NewGame_Click" Margin="5"/>
+            <Button Content="Загрузить" Click="LoadGame_Click" Margin="5"/>
+            <Button Content="Выход" Click="Exit_Click" Margin="5"/> 
+        </StackPanel>
+
+        <!-- Game -->
+        <DockPanel x:Name="GamePanel" Background="Aqua" Visibility="Collapsed">
+
+            <!-- Bottom panel -->
+            <StackPanel DockPanel.Dock="Bottom"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Height="80"
+                        Background="Yellow">
+                <TextBlock Text="Дерево: 0" Margin="10"/>
+                <TextBlock Text="Камень: 0" Margin="10"/>
+                <TextBlock Text="Золото: 0" Margin="10"/>
+            </StackPanel>
+
+            <!-- Right panel -->
+            <StackPanel DockPanel.Dock="Right" Width="150" Background="Red">
+                <Button Content="Герой" Margin="5"/>
+                <Button Content="Закончить день" Margin="5"/>
+            </StackPanel>
+
+            <!-- Center (fills remaining space) -->
+            <Canvas x:Name="GameCanvas" Background="LightGray"/>
+        </DockPanel>
+    </Grid>
+</Window>
