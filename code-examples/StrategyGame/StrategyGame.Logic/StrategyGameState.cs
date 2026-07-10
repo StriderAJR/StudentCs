@@ -20,7 +20,7 @@ public class StrategyGameState
     public void StartNewGame(string playerName, PlayerType playerType)
     {
         Map = GenerateMap(Height, Width);
-        Player = new Player(playerName, playerType, new Coordinate(1, 1));
+        Player = new Player(playerName, playerType, new Coordinate(1, 1), PlayerColor.Red);
     }
 
     public void StartNewGame(string playerName, PlayerType playerType, string mapFilePath)
@@ -30,7 +30,7 @@ public class StrategyGameState
         Map = loadedMap.Map;
         Height = (uint)Map.GetLength(0);
         Width = (uint)Map.GetLength(1);
-        Player = new Player(playerName, playerType, loadedMap.PlayerStart);
+        Player = new Player(playerName, playerType, loadedMap.PlayerStart, PlayerColor.Red);
     }
 
     public bool MovePlayer(Coordinate shift)

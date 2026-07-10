@@ -4,6 +4,26 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="MapCell.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="StrategyGameState.cs" />
+
+    <Compile Include="Game\MapFileLoader.cs" />
+    <Compile Include="Game\MapLoadResult.cs" />
+
+    <Compile Include="Models\Coordinate.cs" />
+    <Compile Include="Models\MapExtensions.cs" />
+    <Compile Include="Models\PlayerColor.cs" />
+    <Compile Include="Models\PlayerType.cs" />
+
+    <Compile Include="Resources\Resource.cs" />
+    <Compile Include="Resources\Wood.cs" />
+    <Compile Include="Resources\Stone.cs" />
+    <Compile Include="Resources\Gold.cs" />
+  </ItemGroup>
 
 </Project>

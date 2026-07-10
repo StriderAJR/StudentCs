@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include=".publish\maps\simple-unicode.txt" />
+        <Content Include=".publish\maps\simple.txt" />
+        <Content Include=".publish\settings\mapsymbols.json" />
+    </ItemGroup>
+    <Target Name="CopyPublishContent" AfterTargets="Build">
+        <ItemGroup>
+            <PublishFiles Include=".publish\**\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(PublishFiles)" DestinationFolder="$(OutputPath)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    </Target>
+</Project>
