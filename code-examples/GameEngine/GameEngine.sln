@@ -1,0 +1,26 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StarterProjects", "StarterProjects", "{B906E6E7-AF25-4A66-BB6E-B80FF85F2C23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "GameEngine\GameEngine.csproj", "{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6D44C85-B5D7-4A7E-B740-3B205BC2B1C7} = {B906E6E7-AF25-4A66-BB6E-B80FF85F2C23}
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
