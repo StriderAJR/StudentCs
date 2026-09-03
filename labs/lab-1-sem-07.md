@@ -45,6 +45,8 @@ A
 - часть дерева отображается неверно;
 - код трудно читать и сопровождать.
 
+В исходной программе специально оставлено несколько ошибок. Не ограничивайтесь исправлением внешнего вида результата: с помощью отладчика проследите изменение `_lineIndex` и `_depth` во время обработки вложенных каталогов.
+
 Ваша задача:
 
 1. С помощью отладчика найти причину неправильной работы программы.
@@ -119,7 +121,7 @@ internal class Program
 
             if (line == "")
             {
-                _lineIndex++;
+                _lineIndex += 2;
                 continue;
             }
 
@@ -134,7 +136,7 @@ internal class Program
 
             if (line.StartsWith("BEGIN "))
             {
-                var name = line.Substring(6);
+                var name = line.Substring(5);
 
                 Console.Write(GetIndent());
                 Console.WriteLine("├─" + name);
@@ -152,7 +154,7 @@ internal class Program
     {
         var result = "";
 
-        for (var i = 0; i < _depth; i++)
+        for (var i = 0; i <= _depth; i++)
         {
             result += "│ ";
         }

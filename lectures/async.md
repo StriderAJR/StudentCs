@@ -148,9 +148,9 @@ public static async Task Sequential()
 ``` csharp
 public static async Task Parallel()
 {
-    var t1 = Task.Delay(1000);
-    var t2 = Task.Delay(1000);
-    var t3 = Task.Delay(1000);
+    Task t1 = Task.Delay(1000);
+    Task t2 = Task.Delay(1000);
+    Task t3 = Task.Delay(1000);
 
     await Task.WhenAll(t1, t2, t3);
 }
@@ -173,16 +173,16 @@ public static async Task<string> GetDataAsync(int id)
 
 public static async Task DemoRequests()
 {
-    var tasks = new List<Task<string>>();
+    List<Task<string>> tasks = new List<Task<string>>();
 
-    for (var i = 1; i <= 5; i++)
+    for (int i = 1; i <= 5; i++)
     {
         tasks.Add(GetDataAsync(i));
     }
 
-    var results = await Task.WhenAll(tasks);
+    string[] results = await Task.WhenAll(tasks);
 
-    foreach (var r in results)
+    foreach (string r in results)
     {
         Console.WriteLine(r);
     }
@@ -202,7 +202,7 @@ public static async Task Fill(List<int> list)
 
 public static async Task Demo()
 {
-    var list = new List<int>();
+    List<int> list = new List<int>();
 
     Fill(list);
 
@@ -287,9 +287,9 @@ public static async Task<string> GetData()
 ``` csharp
 public static int CpuWork()
 {
-    var sum = 0;
+    int sum = 0;
 
-    for (var i = 0; i < 100_000_000; i++)
+    for (int i = 0; i < 100_000_000; i++)
     {
         sum += i;
     }
@@ -360,8 +360,8 @@ await Task.Run(() => CpuWork());
 
 Можно сделать так, как делали раньше:
 ``` csharp
-var t1 = Task.Run(() => CpuWork());
-var t2 = Task.Run(() => CpuWork());
+Task<int> t1 = Task.Run(() => CpuWork());
+Task<int> t2 = Task.Run(() => CpuWork());
 
 await Task.WhenAll(t1, t2);
 ```
@@ -429,7 +429,7 @@ Parallel.For(0, 10, i =>
 Теперь можно убрать эти абстракции и посмотреть, как выглядит базовый уровень.
 
 ``` csharp
-var thread = new Thread(() =>
+Thread thread = new Thread(() =>
 {
     Console.WriteLine("Hello");
 });
@@ -451,7 +451,7 @@ thread.Join();
 Рассмотрим простой пример:
 
 ``` csharp
-var counter = 0;
+int counter = 0;
 
 Parallel.For(0, 1000, i =>
 {
@@ -474,8 +474,8 @@ Parallel.For(0, 1000, i =>
 ### Синхронизация
 Чтобы устранить эту проблему, необходимо явно контролировать доступ к общим данным.
 ``` csharp
-var counter = 0;
-var locker = new object();
+int counter = 0;
+object locker = new object();
 
 Parallel.For(0, 1000, i =>
 {
