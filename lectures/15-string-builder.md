@@ -32,7 +32,7 @@ string report = builder.ToString();
 
 ## Память
 
-![StringBuilder и его буфер в памяти](../img/lectures/09/shared-object.png)
+![StringBuilder и его буфер в памяти](../img/lectures/15/stringbuilder-memory.svg)
 
 `StringBuilder` уменьшает количество промежуточных строк, но не является универсально «более быстрым». Для маленьких сообщений обычная интерполяция проще и вполне достаточна.
 

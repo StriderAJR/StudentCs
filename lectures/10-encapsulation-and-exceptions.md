@@ -103,7 +103,7 @@ catch (ArgumentOutOfRangeException exception)
 
 ## Память
 
-![Объект персонажа в памяти](../img/lectures/09/shared-object.png)
+![Объект Character с закрытым полем health](../img/lectures/09/character-memory.svg)
 
 Скрытое поле всё равно занимает память. Инкапсуляция ограничивает доступ к нему, но не убирает его.
 

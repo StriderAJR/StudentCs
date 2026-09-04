@@ -22,7 +22,7 @@ Console.WriteLine(loadedContent);
 
 При чтении .NET получает байты с диска, декодирует их и создаёт объект `string` в куче.
 
-![Чтение файла создаёт объекты в памяти](../img/lectures/02/stack-heap-reference-types.png)
+![Чтение файла создаёт строку loadedContent в памяти](../img/lectures/06/file-memory.svg)
 
 `ReadAllText` загружает весь текст в память. Большие файлы иногда читают частями, чтобы не создавать огромный объект строки.
 

@@ -40,7 +40,7 @@ static class GameSettings
 
 Статические данные живут вместе с типом до завершения процесса. Это не обычный кадр метода в стеке.
 
-![Статические данные типа](../img/lectures/09/shared-object.png)
+![Статические данные GameSettings](../img/lectures/16/static-data.svg)
 
 ## Методы расширения
 

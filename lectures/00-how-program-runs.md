@@ -40,7 +40,7 @@ int answer = Add(2, 3);
 
 Во время выполнения можно представить стек так:
 
-![Кадры вызовов методов в стеке](../img/lectures/00/call-stack.png)
+![Кадр вызова метода Add в стеке](../img/lectures/00/add-call-stack.svg)
 
 После `return` кадр `Add` снимается. Значение `5` передаётся в `Main`, где записывается в `answer`.
 
@@ -57,7 +57,7 @@ class Server
 Server server = new Server { Name = "Aurora" };
 ```
 
-![Ссылка на объект в куче](../img/lectures/02/stack-heap-reference-types.png)
+![Ссылка на объект Server в куче](../img/lectures/00/server-reference.svg)
 
 Переменная `server` обычно содержит ссылку, а сам объект размещён в куче. Когда на объект больше никто не ссылается, сборщик мусора в подходящий момент освобождает его память.
 
