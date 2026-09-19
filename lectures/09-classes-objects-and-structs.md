@@ -51,7 +51,7 @@ Console.WriteLine(player.Level); // 20
 
 Присваивание скопировало ссылку, а не объект. Это можно представить так:
 
-![Две ссылки на один объект](../img/lectures/09/shared-object.png)
+![Две ссылки на один объект](../img/lectures/09/shared-object.svg)
 
 ## Структура
 

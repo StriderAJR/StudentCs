@@ -1,49 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Linq;
+﻿using System;
 
 namespace TempProject;
 
-// + yield return
-// + интерфейсы
-// + списки, словари, стек, очереди, компоновщик
-// + Exceptions
-// + перегрузка операторов
-// + IEnumerable, IEnumerator
-// + дженерики
-// + делегаты
-// + LINQ
-// + unit тесты
+// Типы данных, числовые типы данных, логический тип данных,
+// преобразование и приведение типов данных, приоритет типов данных,
+// переменные, операторы, арифметические операции, строка.
 
-// разбиение программы на проекты
+// Кол-во зарегистрированных игроков
+// Для каждого игрока: логин, сколько дней назад был в сети,
+// название или номер уровня где остановился, координата x y (дробрые) где находится на уровне
 
-// Многопоточное программирование. Класс Thread. Потоки и блокировки. async и await. Блокирование потока GUI. BackgroundWorker
-// Потокобезопасность. Что такое race condition, зачем нужен lock, чем async/await отличается от многопоточности.
+// Сохранение в файл
 
-class Program
+internal class Program
 {
-    public static async Task Main()
+    public static void Main()
     {
-        Stopwatch sp = Stopwatch.StartNew();
-
-        ConcurrentBag<int> list = new ConcurrentBag<int>();
-
-        // ThreadPool
-        Parallel.For(0, 1000, i =>
-        {
-            list.Add(i);
-        });
-
-        var thread = new Thread(() =>
-        {
-            Console.WriteLine("Hello");
-        });
-
-        thread.Start();
-
-
-        Console.WriteLine(list.Count);
-        Console.WriteLine(sp.ElapsedMilliseconds);
+        var bytes = new byte[] { 49, 0, 50, 0 };
+        var number = BitConverter.ToInt32(bytes);
+        Console.WriteLine(number);
     }
 }

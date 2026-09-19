@@ -54,7 +54,7 @@ ItemStack result = first + second;
 
 `ItemStack` — структура, поэтому локальные значения обычно содержат поля непосредственно в своём хранилище. Результат `first + second` — новая копия структуры.
 
-![Значения структуры в памяти](../img/lectures/12/struct-values.png)
+![Значения структуры в памяти](../img/lectures/12/struct-values.svg)
 
 ## Итог
 
