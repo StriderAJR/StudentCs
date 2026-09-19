@@ -1,6 +1,28 @@
+- [Создание проекта с NUnit-тестами](#создание-проекта-с-nunit-тестами)
+  - [Создание проекта с тестами (Visual Studio)](#создание-проекта-с-тестами-visual-studio)
+- [Добавление ссылки на основной проект](#добавление-ссылки-на-основной-проект)
+  - [Создание проекта с тестами (VS Code)](#создание-проекта-с-тестами-vs-code)
+    - [Создание NUnit-проекта](#создание-nunit-проекта)
+    - [Добавление ссылки на MainProject](#добавление-ссылки-на-mainproject)
+- [Если используется Solution-файл](#если-используется-solution-файл)
+- [Полная последовательность команд](#полная-последовательность-команд)
+- [Проверка](#проверка)
+- [Подготовка методов к тестированию](#подготовка-методов-к-тестированию)
+- [Создание первого теста](#создание-первого-теста)
+  - [`[Test]`](#test)
+- [Вызов тестируемого метода](#вызов-тестируемого-метода)
+- [Проверка результата](#проверка-результата)
+- [Проверка `bool`](#проверка-bool)
+- [Несколько тестов одного метода](#несколько-тестов-одного-метода)
+- [`[TestCase]`](#testcase)
+- [Основные виды проверок](#основные-виды-проверок)
+- [Запуск тестов](#запуск-тестов)
+- [Тесты для лабораторной работы](#тесты-для-лабораторной-работы)
+
+
 # Создание проекта с NUnit-тестами
 
-Для лабораторной работы у вас уже должен быть создан основной проект с программой. В дальнейшем будем считать, что он называется:
+Для лабораторной работы у вАас уже должен быть создан основной проект с программой. В дальнейшем будем считать, что он называется:
 
 ```text
 MainProject
@@ -26,7 +48,7 @@ MainProject
 > ProgramTests
 > ```
 
-## Создание проекта с тестами
+## Создание проекта с тестами (Visual Studio)
 
 В `Solution Explorer` нажмите правой кнопкой мыши на решение (`Solution`) и выберите:
 
@@ -96,6 +118,256 @@ MainProject
 ![](./img/unit-tests/4.png)
 
 После этого из проекта `ProgramTests` можно будет обращаться к публичным методам из `MainProject`.
+
+## Создание проекта с тестами (VS Code)
+
+В VS Code проекты обычно создаются через терминал с помощью команды `dotnet`.
+
+> **Обратите внимание!**
+> Структура solution должно быть такой:
+> 
+> есть директория для solution и в ней каждый проект лежит отдельно в своей папке. Т.е. структура такая:
+> 
+> ```text
+> Solution
+> ├── Lab02.sln
+> ├── MainProject
+> |   ├── Program.cs
+> |   └── MainProject.csproj
+> └── ProgramTests
+>     ├── Program.cs
+>     └── ProgramTests.csproj
+> 
+> Причем sln файл скорее всего у вас будет даже отсутствовать. Пока вы его вручную не создадите команды создания проекта dotnet new его не создадут. В целом, он и не особо нужен. Но если хотите, чтобы было, то команда для создания
+> ```
+> dotnet sln add Lab02
+> dotnet sln add MainProject
+> dotnet sln add ProgramTests
+> ```
+```
+
+Предположим, что основной проект лабораторной уже существует и называется:
+
+```text
+MainProject
+```
+
+Нужно создать рядом с ним второй проект:
+
+```text
+ProgramTests
+```
+
+Структура должна получиться такой:
+
+```text
+Solution
+├── MainProject
+└── ProgramTests
+```
+
+### Создание NUnit-проекта
+
+Откройте терминал в папке, где находится `MainProject`.
+
+Например:
+
+```text
+Solution
+└── MainProject
+```
+
+Находясь в папке `Solution`, выполните:
+
+```bash
+dotnet new nunit -n ProgramTests
+```
+
+После этого рядом с `MainProject` появится новый проект:
+
+```text
+Solution
+├── MainProject
+└── ProgramTests
+```
+
+Команда:
+
+```bash
+dotnet new nunit -n ProgramTests
+```
+
+означает:
+
+* `dotnet new` — создать новый проект;
+* `nunit` — использовать шаблон NUnit;
+* `-n ProgramTests` — назвать проект `ProgramTests`.
+
+---
+
+### Добавление ссылки на MainProject
+
+Сам по себе проект `ProgramTests` пока не имеет доступа к коду из `MainProject`.
+
+Нужно добавить ссылку на основной проект.
+
+Находясь в папке `Solution`, выполните:
+
+```bash
+dotnet add ProgramTests reference MainProject
+```
+
+После этого `ProgramTests` сможет использовать публичные методы из `MainProject`.
+
+Фактически в файл:
+
+```text
+ProgramTests/ProgramTests.csproj
+```
+
+будет добавлена ссылка примерно такого вида:
+
+```xml
+<ItemGroup>
+    <ProjectReference Include="..\MainProject\MainProject.csproj" />
+</ItemGroup>
+```
+
+Редактировать `.csproj` вручную не требуется.
+
+---
+
+# Если используется Solution-файл
+
+Если у вас есть файл решения, например:
+
+```text
+Solution.sln
+```
+
+новый проект желательно также добавить в него.
+
+Команда:
+
+```bash
+dotnet sln add ProgramTests
+```
+
+Если основной проект ещё не был добавлен в solution, можно добавить и его:
+
+```bash
+dotnet sln add MainProject
+```
+
+После этого:
+
+```bash
+dotnet sln list
+```
+
+покажет оба проекта.
+
+Например:
+
+```text
+MainProject/MainProject.csproj
+ProgramTests/ProgramTests.csproj
+```
+
+---
+
+# Полная последовательность команд
+
+Если `MainProject` уже существует, обычно достаточно выполнить:
+
+```bash
+dotnet new nunit -n ProgramTests
+dotnet add ProgramTests reference MainProject
+dotnet sln add ProgramTests
+```
+
+Если `.sln`-файла ещё нет, его можно создать:
+
+```bash
+dotnet new sln
+```
+
+Затем добавить оба проекта:
+
+```bash
+dotnet sln add MainProject
+dotnet sln add ProgramTests
+```
+
+И добавить ссылку:
+
+```bash
+dotnet add ProgramTests reference MainProject
+```
+
+---
+
+# Проверка
+
+После этого можно выполнить:
+
+```bash
+dotnet test
+```
+
+Команда найдёт проект с NUnit-тестами, соберёт оба проекта и запустит тесты.
+
+Если всё настроено правильно, `ProgramTests` сможет обращаться к методам из `MainProject`:
+
+```csharp
+using MainProject;
+
+namespace ProgramTests;
+
+public class Tests
+{
+    [Test]
+    public void Add_TwoNumbers_ReturnsSum()
+    {
+        var result = Program.Add(2, 3);
+
+        Assert.That(result, Is.EqualTo(5));
+    }
+}
+```
+
+Итоговая структура:
+
+```text
+Solution
+│
+├── MainProject
+│   ├── MainProject.csproj
+│   └── Program.cs
+│
+├── ProgramTests
+│   ├── ProgramTests.csproj
+│   └── UnitTest1.cs
+│
+└── Solution.sln
+```
+
+> В примерах преподавателя проекты могут называться:
+>
+> ```text
+> UnitTestsDemo.MainProject
+> UnitTestsDemo.ProgramTests
+> ```
+>
+> Префикс `UnitTestsDemo` относится только к структуре большого хранилища кода преподавателя.
+>
+> У вас проекты будут называться:
+>
+> ```text
+> MainProject
+> ProgramTests
+> ```
+
 
 ---
 
