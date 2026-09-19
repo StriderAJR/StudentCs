@@ -33,7 +33,7 @@ MainProject
 ```text
 Add → New Project
 ```
-[](./img/unit-tests/1.png)
+![](./img/unit-tests/1.png)
 
 В списке шаблонов найдите:
 
@@ -43,7 +43,7 @@ NUnit Test Project
 
 Выберите его и нажмите `Next`.
 
-[](./img/unit-tests/2.png)
+![](./img/unit-tests/2.png)
 
 В качестве имени проекта укажите:
 
@@ -83,7 +83,7 @@ ProgramTests
 Add → Project Reference
 ```
 
-[](./img/unit-tests/3.png)
+![](./img/unit-tests/3.png)
 
 В открывшемся окне поставьте галочку напротив:
 
@@ -93,7 +93,7 @@ MainProject
 
 и нажмите `OK`.
 
-[](./img/unit-tests/4.png)
+![](./img/unit-tests/4.png)
 
 После этого из проекта `ProgramTests` можно будет обращаться к публичным методам из `MainProject`.
 
