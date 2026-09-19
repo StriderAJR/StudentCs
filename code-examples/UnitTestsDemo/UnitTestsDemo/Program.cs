@@ -2,6 +2,18 @@
 
 public class Program
 {
+    public static int ConvertToNumber(string buffer)
+    {
+        int result = 0;
+        foreach (char letter in buffer)
+        {
+            int digit = letter - '0'; // 0 = 48, 1 = 49 ... 
+            result = result * 10 + digit;
+        }
+
+        return result;
+    }
+
     public static int Add(int a, int b)
     {
         return a + b;
@@ -86,5 +98,6 @@ public class Program
 
     public static void Main()
     {
+        Add(1, 2);
     }
 }

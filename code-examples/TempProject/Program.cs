@@ -1,23 +1,49 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace TempProject;
 
-// Типы данных, числовые типы данных, логический тип данных,
-// преобразование и приведение типов данных, приоритет типов данных,
-// переменные, операторы, арифметические операции, строка.
-
-// Кол-во зарегистрированных игроков
-// Для каждого игрока: логин, сколько дней назад был в сети,
-// название или номер уровня где остановился, координата x y (дробрые) где находится на уровне
-
-// Сохранение в файл
+// ветвления
+// циклы
+// методы
+// юнит тесты
 
 internal class Program
 {
+    public static int ConvertToNumber(string buffer)
+    {
+        // ...
+        // нельзя использовать Parse, TryParse, Convert.ToInt32() и т.д. подобное
+        // вернуть число
+
+        // привидение - (int)
+        // преобразование - Parse, Convert.ToInt32()
+
+        // "1234"
+
+        int result = 0;
+        foreach(char letter in buffer)
+        {
+            int digit = letter - '0'; // 0 = 48, 1 = 49 ... 
+            result = result * 10 + digit;
+        }
+
+        // 1 = 1 * 10^3
+        // 2 = 2 * 10^2
+        // 3 = 3 * 10^1
+        // 4
+        // 1234
+
+        // 1 => result = 1
+        // 2 => result = 1 * 10 + 2 = 12
+        // 3 => result = 12 * 10 + 3 = 123
+        // ...
+
+        return result;
+    }
+
     public static void Main()
     {
-        var bytes = new byte[] { 49, 0, 50, 0 };
-        var number = BitConverter.ToInt32(bytes);
-        Console.WriteLine(number);
+        int num = ConvertToNumber(Console.ReadLine());
     }
 }

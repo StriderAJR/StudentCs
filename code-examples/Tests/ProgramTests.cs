@@ -1,4 +1,4 @@
-﻿using Program = UnitTestsDemo.MainProject.Program;
+﻿using UnitTestsDemo.MainProject;
 
 namespace UnitTestsDemo.Tests;
 
