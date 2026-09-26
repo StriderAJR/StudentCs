@@ -1,6 +1,6 @@
 Шпаргалка:
 
-```
+```bash
 student@ilab:~/CsLabs/Kirsanov$ git clone https://github.com/StriderAJR/git-demo.git
 student@ilab:~/CsLabs/Kirsanov$ cd git-demo/
 student@ilab:~/CsLabs/Kirsanov/git-demo$ git config user.name "StriderAJR"
