@@ -2,7 +2,7 @@
 
 ## Имя
 
-sem-1-lab-00-server-monitoring
+sem-1-lab-01-server-monitoring
 
 ## Сложность
 
