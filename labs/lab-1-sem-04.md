@@ -16,16 +16,26 @@ sem-1-lab-04-event-log
 
 Во время работы игровой сервер ведёт журнал событий. Используйте тот же [event_server.log](lab-1-sem-03/event_server.log), что и в третьей лабораторной. Файл содержит 1000 записей. Формат строки: `yyyy-MM-dd HH:mm:ss.fff [level][category] message`.
 
-Прочитайте журнал в массив строк `string[]`. Не создавайте собственные классы, структуры или словари для хранения записей: каждая строка лога остаётся обычной строкой. Для результатов фильтрации разрешается использовать готовый `List<string>`.
+Сначала прочитайте файл в массив строк `string[]`, затем преобразуйте каждую строку в запись `LogEntry`. Создайте `LogEntry` самостоятельно как **класс или структуру** и объясните выбор на защите. Тип должен только хранить данные, без собственных методов:
+
+```csharp
+public DateTime Timestamp;
+public string Level;
+public string Category;
+public string Message;
+```
+
+Для результатов фильтрации можно использовать массив `LogEntry[]` или готовый `List<LogEntry>`.
 
 Реализуйте следующие статические методы в классе `Program`:
 
-- `FilterByDate(string[] lines, string date)` — возвращает массив строк, начинающихся с указанной даты в формате `yyyy-MM-dd`;
-- `FilterByLevel(string[] lines, string level)` — возвращает строки уровня `Info`, `Warning`, `Error` или `Fatal`;
-- `FilterByCategory(string[] lines, string category)` — возвращает строки категории, например `Server`, `Combat` или `Database`;
-- `Search(string[] lines, string text)` — возвращает строки, в сообщении которых есть текст без учёта регистра;
-- `CountEntries(string[] lines, string marker)` — возвращает количество строк, содержащих переданный маркер: например `[Warning]` или `[Error]`;
-- `GetServerStatus(string[] lines)` — возвращает `Сервер работает штатно`, если нет ошибок и `Fatal`; `Есть ошибки: требуется проверка`, если есть уровень `Error`; `КРИТИЧЕСКАЯ ОШИБКА: сервер остановлен`, если есть строка `[Fatal][Server]`.
+- `ParseLog(string[] lines)` — возвращает массив `LogEntry[]`;
+- `FilterByDate(LogEntry[] entries, DateTime date)` — возвращает записи указанной даты;
+- `FilterByLevel(LogEntry[] entries, string level)` — возвращает записи уровня `Info`, `Warning`, `Error` или `Fatal`;
+- `FilterByCategory(LogEntry[] entries, string category)` — возвращает записи категории, например `Server`, `Combat` или `Database`;
+- `Search(LogEntry[] entries, string text)` — возвращает записи, в сообщении которых есть текст без учёта регистра;
+- `CountByLevel(LogEntry[] entries, string level)` — возвращает количество записей переданного уровня;
+- `GetServerStatus(LogEntry[] entries)` — возвращает `Сервер работает штатно`, если нет ошибок и `Fatal`; `Есть ошибки: требуется проверка`, если есть уровень `Error`; `КРИТИЧЕСКАЯ ОШИБКА: сервер остановлен`, если есть запись уровня `Fatal` категории `Server`.
 
 Для предоставленного файла результат статуса должен быть `КРИТИЧЕСКАЯ ОШИБКА: сервер остановлен`: 2 сентября сервер остановился из-за недоступной базы данных.
 
@@ -39,17 +49,35 @@ sem-1-lab-04-event-log
 <summary>Показать подсказки</summary>
 
 - Количество строк в журнале заранее неизвестно. Массив для результата фильтрации можно создать той же длины, что и исходный, а после заполнения скопировать нужную часть в новый массив.
-- Уровень и категорию не нужно выделять в отдельные объекты: для фильтра по уровню достаточно проверить `line.Contains("[Warning]")`, а для категории — `line.Contains("[Combat]")`.
-- Чтобы найти записи за дату, проверьте начало строки: `line.StartsWith("2026-09-02")`.
+- Для разбора одной строки найдите позиции скобок с помощью `IndexOf`, а затем получите части строки через `Substring`.
+- После разбора фильтр по уровню выглядит так: `entries[i].Level == "Warning"`, а фильтр по категории — так: `entries[i].Category == "Combat"`.
+- Чтобы найти записи за дату, сравните даты: `entries[i].Timestamp.Date == date.Date`.
 - Если в программе появляются большие повторяющиеся фрагменты кода, подумайте, как сделать решение проще и понятнее.
+
+### Разбор одной строки
+
+```csharp
+LogEntry entry = new LogEntry();
+
+entry.Timestamp = DateTime.Parse(line.Substring(0, 23));
+
+int firstOpenBracket = line.IndexOf('[');
+int firstCloseBracket = line.IndexOf(']', firstOpenBracket);
+int secondOpenBracket = line.IndexOf('[', firstCloseBracket);
+int secondCloseBracket = line.IndexOf(']', secondOpenBracket);
+
+entry.Level = line.Substring(firstOpenBracket + 1, firstCloseBracket - firstOpenBracket - 1);
+entry.Category = line.Substring(secondOpenBracket + 1, secondCloseBracket - secondOpenBracket - 1);
+entry.Message = line.Substring(secondCloseBracket + 2);
+```
 
 ### Обход массива
 
 ```csharp
-for (int i = 0; i < lines.Length; i++)
+for (int i = 0; i < entries.Length; i++)
 {
-    string line = lines[i];
-    // Обработка одной строки.
+    LogEntry entry = entries[i];
+    // Обработка одной записи.
 }
 ```
 
@@ -58,14 +86,14 @@ for (int i = 0; i < lines.Length; i++)
 Сначала создайте временный массив максимального размера. Переменная `resultCount` показывает, сколько его ячеек уже заполнено.
 
 ```csharp
-string[] temporaryResult = new string[lines.Length];
+LogEntry[] temporaryResult = new LogEntry[entries.Length];
 int resultCount = 0;
 
-for (int i = 0; i < lines.Length; i++)
+for (int i = 0; i < entries.Length; i++)
 {
-    if (lines[i].Contains("[Warning]"))
+    if (entries[i].Level == "Warning")
     {
-        temporaryResult[resultCount] = lines[i];
+        temporaryResult[resultCount] = entries[i];
         resultCount++;
     }
 }
@@ -74,23 +102,23 @@ for (int i = 0; i < lines.Length; i++)
 После цикла скопируйте только заполненную часть в итоговый массив:
 
 ```csharp
-string[] result = new string[resultCount];
+LogEntry[] result = new LogEntry[resultCount];
 Array.Copy(temporaryResult, result, resultCount);
 return result;
 ```
 
-### `List<string>` вместо массива фиксированного размера
+### `List<LogEntry>` вместо массива фиксированного размера
 
-Если заранее неизвестно, сколько строк пройдёт фильтр, можно использовать готовый список `List<string>`. Для этого в начале файла добавьте `using System.Collections.Generic;`. Список сам увеличивает размер при вызове `Add`.
+Если заранее неизвестно, сколько записей пройдёт фильтр, можно использовать готовый список `List<LogEntry>`. Для этого в начале файла добавьте `using System.Collections.Generic;`. Список сам увеличивает размер при вызове `Add`.
 
 ```csharp
-var result = new List<string>();
+var result = new List<LogEntry>();
 
-for (int i = 0; i < lines.Length; i++)
+for (int i = 0; i < entries.Length; i++)
 {
-    if (lines[i].Contains("[Warning]"))
+    if (entries[i].Level == "Warning")
     {
-        result.Add(lines[i]);
+        result.Add(entries[i]);
     }
 }
 
@@ -104,9 +132,9 @@ return result.ToArray();
 ```csharp
 int count = 0;
 
-for (int i = 0; i < lines.Length; i++)
+for (int i = 0; i < entries.Length; i++)
 {
-    if (lines[i].Contains("[Error]"))
+    if (entries[i].Level == "Error")
     {
         count++;
     }
@@ -119,7 +147,7 @@ return count;
 
 ## Дополнительное задание
 
-Добавьте метод `ExportFiltered(string path, string[] entries)`, который сохраняет отфильтрованные записи в исходном формате лога.
+Добавьте метод `ExportFiltered(string path, LogEntry[] entries)`, который сохраняет отфильтрованные записи в исходном формате лога.
 
 ## Пример юнит-тестов
 
