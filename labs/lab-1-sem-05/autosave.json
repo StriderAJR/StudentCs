@@ -1,0 +1,10 @@
+{
+  "character": "Mira",
+  "map": "Whispering Forest",
+  "position": {
+    "x": 63,
+    "y": 18
+  },
+  "health": 42,
+  "inventory": ["iron sword", "healing potion"]
+}
