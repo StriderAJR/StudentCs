@@ -1,0 +1,4 @@
+PlayerUtils|IsDead|player
+PlayerUtils|Heal|player,50
+InventoryUtils|IsEmpty|inventory
+MapUtils|IsInside|map,10,4

@@ -1,0 +1,4 @@
+5|1|interact
+7|3|open
+9|4|close
+2|2|damage

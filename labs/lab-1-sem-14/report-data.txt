@@ -1,0 +1,20 @@
+SERVER
+name=Northland-01
+onlinePlayers=154
+uptimeMinutes=8640
+END
+PLAYERS
+NorthernFox|18|online
+PixelMage|12|online
+StoneWolf|9|offline
+END
+OBJECTS
+Monster|15|8
+Chest|7|12
+Merchant|20|3
+END
+EVENTS
+12:15:08|Player NorthernFox connected
+12:15:14|Monster attacked Player PixelMage
+12:15:20|Chest opened
+END

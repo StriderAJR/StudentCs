@@ -1,77 +1,33 @@
-﻿using System;
-using System.Reflection.Metadata.Ecma335;
-
-namespace TempProject;
-
-// ветвления
-// циклы
-// методы
-// юнит тесты
+﻿namespace TempProject;
 
 internal class Program
 {
-    public static int ParseToNumber(string buffer)
+    static void Attack(ref int mana)
     {
-        // "1234"
-
-        int result = 0;
-        foreach (char c in buffer)
+        int cost = 10;
+        if (mana < cost)
         {
-            int digit = c - '0';
-            result = result * 10 + digit;
+            throw new InvalidOperationException("Недостаточно маны!");
         }
 
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            char c = buffer[i];
-
-            int digit = c - '0';
-            result = result * 10 + digit;
-        }
-
-        return result;
-
-        // 1 = 1
-        // 2 = 1 * 10 + 2 = 12
-        // 3 = 12 * 10 + 3 = 120 + 3 = 123
-        // 4 = 123 * 10 + 4 = 1234
+        mana = mana - cost;
+        Console.WriteLine("Огненный шар!");
     }
-
 
     public static void Main()
     {
-        int a = 10;
-
-        // for 
-        // while 
-        // do-while
-
-        for (int i = 5; i <= 5; i++)
+        try
         {
-            if (i % 2 == 0) continue;
-
-            Console.WriteLine(i);
-        }
-
-        int i2 = 5;
-        while(a <= 5)
-        {
-            if (i2 % 2 == 0)
+            int mana = 25;
+            while(true)
             {
-                i2++;
-                continue;
+                Attack(ref mana);
             }
-            Console.WriteLine(i2);
-            i2++;
         }
-
-        do
+        catch (InvalidOperationException ex)
         {
-            Console.WriteLine("...");
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("Используем обычную атаку.");
         }
-        while (a <= 5);
-
-        int num = Add(1, 2);
-        PrintMessage("Hello");
     }
 }
