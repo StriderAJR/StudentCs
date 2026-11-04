@@ -256,6 +256,56 @@ private bool CorrectMonth(int month)
 }
 ```
 
+## Не усложнять логические выражения
+
+Не нужно явно сравнивать логические переменные с `true` или `false`. Они уже содержат логическое значение.
+
+Плохо:
+
+```csharp
+if (isActive == true)
+{
+    Start();
+}
+
+if (isFinished == false)
+{
+    Process();
+}
+```
+
+Лучше:
+
+```csharp
+if (isActive)
+{
+    Start();
+}
+
+if (!isFinished)
+{
+    Process();
+}
+```
+
+Аналогично не нужно писать:
+
+```csharp
+return isActive == true;
+```
+
+Достаточно:
+
+```csharp
+return isActive;
+```
+
+Для отрицания:
+
+```csharp
+return !isActive;
+```
+
 ## Не дублировать одинаковые проверки
 
 Не нужно повторять одну и ту же проверку, если её результат уже известен и данные с момента проверки не изменились.
